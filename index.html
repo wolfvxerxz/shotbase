@@ -3,388 +3,2240 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pulse — Infrastructure Monitor</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css" />
+<title>Scott AI — Where Builders Align</title>
+<style>
+  @font-face {
+    font-family: 'Geist';
+    src: url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/Geist-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/Geist-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/Geist-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist Mono';
+    src: url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-mono/GeistMono-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist Mono';
+    src: url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-mono/GeistMono-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+</style>
 <style>
   :root {
-    --bg: #0a0a0a;
-    --sidebar: #080808;
-    --panel: #0e0e0e;
-    --panel-2: #111;
-    --text: #ededed;
-    --muted: #707070;
-    --muted-dim: #4a4a4a;
-    --border: #1d1d1d;
-    --border-soft: #161616;
-    --accent: #ff4500;
-    --accent-bright: #ff5a1f;
-    --green: #2ecc71;
-    --yellow: #e0a531;
-    --blue: #4a9eff;
-    --bar-base: #262626;
-    --bar-base-edge: #313131;
-    --mono: 'Geist Mono', monospace;
+    --bg: #000000;
+    --bg-dark: #0A0A0A;
+    --surface: #161616;
+    --surface-2: #1F1F1F;
+    --border: #333333;
+    --border-light: #404040;
+    --text: #FFFFFF;
+    --text-muted: #A3A3A3;
+    --text-dim: #525252;
+    --accent: #2B5BF3;
+    --accent-dim: rgba(43, 91, 243, 0.15);
+    --accent-glow: rgba(43, 91, 243, 0.5);
+    --danger: #EF4444;
+    --success: #22C55E;
+    --font-main: 'Geist', sans-serif;
+    --font-mono: 'Geist Mono', monospace;
+    --font-ui: 'Geist', sans-serif;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-full: 999px;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
   body {
-    background: #050505; font-family: 'Geist', sans-serif; font-weight: 500;
-    -webkit-font-smoothing: antialiased; color: var(--text);
-    display: flex; justify-content: center; padding: 28px 20px; min-height: 100vh;
-  }
-  .hgi-stroke { font-style: normal; line-height: 1; display: inline-flex; }
-  ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-thumb { background: #1e1e1e; border-radius: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-
-  .app {
-    width: 1480px; max-width: 100%;
-    display: grid; grid-template-columns: 240px 1fr 320px;
-    background: var(--bg); border: 1px solid #141414; border-radius: 20px;
-    overflow: hidden; height: 920px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-main);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 
-  /* ===== LEFT SIDEBAR ===== */
-  .sidebar { background: var(--sidebar); border-right: 1px solid var(--border-soft); display: flex; flex-direction: column; padding: 22px 0; }
-  .brand { display: flex; align-items: center; gap: 11px; padding: 0 22px 24px; }
-  .brand .logo { width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg,#ff4500,#ff7e3f); display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; }
-  .brand .name { font-size: 21px; font-weight: 600; letter-spacing: -0.5px; color: #fff; }
+  /* grid pattern removed */
 
-  .nav-section { padding: 0 12px; margin-bottom: 8px; }
-  .nav-label { font-size: 11px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted-dim); padding: 14px 10px 8px; font-weight: 600; }
-  .nav-item {
-    display: flex; align-items: center; gap: 12px; padding: 10px 10px; border-radius: 9px;
-    color: var(--muted); font-size: 14.5px; font-weight: 500; cursor: pointer; transition: all .14s; position: relative;
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    height: 52px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
   }
-  .nav-item i { font-size: 19px; flex-shrink: 0; }
-  .nav-item:hover { background: #101010; color: #bbb; }
-  .nav-item.active { background: #131313; color: #fff; }
-  .nav-item.active::before { content:''; position:absolute; left:-12px; top:8px; bottom:8px; width:3px; background:var(--accent); border-radius:0 3px 3px 0; }
-  .nav-item .count { margin-left: auto; font-size: 11px; font-family: var(--mono); font-weight:500; background: #1a1a1a; color: var(--muted); padding: 2px 7px; border-radius: 10px; }
-  .nav-item .count.alert { background: rgba(255,69,0,.15); color: var(--accent-bright); }
 
-  .sidebar-footer { margin-top: auto; padding: 16px 12px 0; border-top: 1px solid var(--border-soft); }
-  .user-card { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; cursor: pointer; transition: background .14s; }
-  .user-card:hover { background: #101010; }
-  .avatar { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg,#ff4500,#ff7e3f); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #fff; flex-shrink: 0; }
-  .user-card .info { line-height: 1.3; }
-  .user-card .info .nm { font-size: 13.5px; font-weight: 600; color: var(--text); }
-  .user-card .info .role { font-size: 11.5px; color: var(--muted); font-weight: 500; }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+  }
 
-  /* ===== MAIN ===== */
-  .main { display: flex; flex-direction: column; overflow-y: auto; }
-  .topbar { display: flex; align-items: center; gap: 16px; padding: 20px 28px; border-bottom: 1px solid var(--border-soft); position: sticky; top: 0; background: var(--bg); z-index: 10; }
-  .topbar h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.4px; }
-  .topbar .crumb { font-size: 13px; color: var(--muted); font-family: var(--mono); font-weight:500; }
-  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
-  .live { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--green); font-family: var(--mono); font-weight: 600; }
-  .live .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 1.8s infinite; }
-  @keyframes pulse { 0%,100%{ box-shadow:0 0 0 0 rgba(46,204,113,.5);} 50%{ box-shadow:0 0 0 5px rgba(46,204,113,0);} }
-  .icon-btn { width: 38px; height: 38px; border: 1px solid #232323; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--muted); cursor: pointer; transition: border-color .14s; }
-  .icon-btn:hover { border-color: #333; color: var(--text); }
-  .icon-btn i { font-size: 18px; }
+  .nav-logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--accent-glow);
+  }
 
-  /* KPIs */
-  .kpis { display: grid; grid-template-columns: repeat(4,1fr); border-bottom: 1px solid var(--border-soft); }
-  .kpi { padding: 20px 24px; border-right: 1px solid var(--border-soft); }
-  .kpi:last-child { border-right: none; }
-  .kpi .k-label { font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: .3px; text-transform: uppercase; }
-  .kpi .k-val { font-size: 27px; font-weight: 600; margin-top: 8px; font-family: var(--mono); letter-spacing: -1px; }
-  .kpi .k-val small { font-size: 15px; color: var(--muted); }
-  .kpi .k-sub { font-size: 12px; margin-top: 5px; font-family: var(--mono); font-weight:500; display:flex; align-items:center; gap:4px; }
-  .kpi .k-sub i { font-size: 13px; }
-  .up { color: var(--accent-bright); } .down { color: var(--green); }
-  .k-sub .muted { color: var(--muted-dim); }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+  }
 
-  /* controls */
-  .controls { display: flex; align-items: center; gap: 10px; padding: 20px 28px 0; }
-  .pill { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 15px; border: 1px solid #232323; border-radius: 10px; font-size: 14px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: border-color .14s; }
-  .pill:hover { border-color: #333; }
-  .pill .chev { color: var(--muted); font-size: 15px; }
-  .stepper { display: flex; align-items: center; border: 1px solid #232323; border-radius: 10px; height: 40px; overflow: hidden; }
-  .stepper .arrow { width: 34px; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--muted); cursor: pointer; font-size:16px; }
-  .stepper .arrow:hover { background: #131313; color: var(--text); }
-  .stepper .label { padding: 0 14px; font-size: 14px; font-weight: 500; white-space: nowrap; }
-  .pill.right { margin-left: auto; }
-  .pill.right .amt { color: #fff; font-weight: 600; font-family: var(--mono); }
-  .pill.right .lbl { color: var(--muted-dim); }
+  .nav-links a {
+    font-size: 14px;
+    color: #A1A1A1;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
 
-  /* chart */
-  .chart-wrap { padding: 22px 28px 0; position: relative; }
-  .badge { position: absolute; top: 14px; right: 28px; display: flex; align-items: center; gap: 9px; padding: 9px 15px; border: 1px solid #2a2a2a; border-radius: 10px; background: rgba(15,15,15,.5); }
-  .badge .req { font-size: 15px; font-weight: 500; font-family: var(--mono); }
-  .badge .delta { font-size: 15px; font-weight: 600; color: var(--accent-bright); font-family: var(--mono); }
-  .avg-label { font-size: 15px; font-weight: 500; color: var(--muted); margin-top: 26px; font-family: var(--mono); }
-  .bars { display: flex; align-items: flex-end; gap: 5px; height: 128px; margin-top: 8px; position: relative; }
-  .bar { flex: 1; background: var(--bar-base); border: 1px solid var(--bar-base-edge); border-radius: 4px 4px 0 0; position: relative; cursor: pointer; transition: filter .14s; }
-  .bar:hover { filter: brightness(1.4); }
-  .bar .tip { position: absolute; bottom: calc(100% + 7px); left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 7px; padding: 5px 9px; font-size: 11px; font-family: var(--mono); font-weight:500; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .12s; z-index: 5; }
-  .bar:hover .tip { opacity: 1; }
-  .threshold { position: absolute; left: 0; right: 0; border-top: 1px dashed #3a3a3a; }
-  .threshold span { position: absolute; right: 0; top: -16px; font-size: 10px; color: var(--muted-dim); font-family: var(--mono); font-weight:500; }
-  .axis { display: flex; justify-content: space-between; padding: 12px 2px 18px; font-size: 12.5px; color: var(--muted); border-bottom: 1px solid var(--border-soft); font-family: var(--mono); font-weight:500; }
+  .nav-cta {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
 
-  /* table */
-  .table-head { display: flex; align-items: center; gap: 14px; padding: 20px 28px 0; }
-  .reg-count { font-size: 16px; font-weight: 600; white-space: nowrap; }
-  .reg-count b { color: var(--accent-bright); font-family: var(--mono); font-weight:600; }
-  .search { flex: 1; display: flex; align-items: center; gap: 10px; height: 42px; padding: 0 15px; border: 1px solid #232323; border-radius: 10px; color: var(--muted); font-size: 14px; margin-left: 12px; }
-  .search i { font-size: 17px; }
-  .search input { background: none; border: none; outline: none; color: var(--text); font-size: 14px; font-family: inherit; font-weight:500; width: 100%; }
-  .search input::placeholder { color: var(--muted); }
-  .add-filter { display: flex; align-items: center; gap: 9px; height: 42px; padding: 0 15px; border: 1px solid #232323; border-radius: 10px; font-size: 14px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: border-color .14s; }
-  .add-filter:hover { border-color: #333; }
-  .add-filter i { font-size: 16px; color: var(--muted); }
+  .btn-ghost {
+    padding: 5px 16px 6px;
+    font-family: var(--font-main);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: background 0.2s;
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.05); }
 
-  table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-  thead th { text-align: left; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; padding: 12px 28px; border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); }
-  thead th.num { text-align: right; }
-  tbody td { padding: 13px 28px; border-bottom: 1px solid var(--border-soft); font-size: 14.5px; vertical-align: middle; }
-  tbody tr { transition: background .12s; cursor: pointer; }
-  tbody tr:hover { background: #0d0d0d; }
-  .checkbox { width: 17px; height: 17px; border: 1.5px solid #333; border-radius: 5px; flex-shrink: 0; cursor: pointer; display: inline-flex; align-items:center; justify-content:center; vertical-align: middle; transition: all .12s; }
-  .checkbox i { font-size: 11px; color: #fff; opacity: 0; }
-  .checkbox.on { background: var(--accent); border-color: var(--accent); }
-  .checkbox.on i { opacity: 1; }
-  .svc { display: flex; align-items: center; gap: 11px; }
-  .svc .ico { width: 32px; height: 32px; border-radius: 8px; background: #161616; border: 1px solid #232323; display: flex; align-items: center; justify-content: center; color: var(--muted); flex-shrink: 0; font-size:16px; }
-  .svc .meta .nm { font-weight: 600; }
-  .svc .meta .rg { font-size: 12px; color: var(--muted); font-family: var(--mono); font-weight:500; margin-top: 1px; }
-  .num { text-align: right; font-family: var(--mono); font-weight:500; }
-  .status { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; font-family: var(--mono); padding: 4px 10px; border-radius: 20px; }
-  .status .d { width: 6px; height: 6px; border-radius: 50%; }
-  .st-healthy { color: var(--green); background: rgba(46,204,113,.08); } .st-healthy .d { background: var(--green); }
-  .st-degraded { color: var(--yellow); background: rgba(224,165,49,.08); } .st-degraded .d { background: var(--yellow); }
-  .st-critical { color: var(--accent-bright); background: rgba(255,69,0,.08); } .st-critical .d { background: var(--accent-bright); }
-  .spark { display: inline-flex; align-items: flex-end; gap: 2px; height: 24px; }
-  .spark i { width: 3px; border-radius: 2px; display: inline-block; }
-  .pct.up { color: var(--accent-bright); } .pct.down { color: var(--green); }
+  .btn-primary {
+    padding: 5px 16px 6px;
+    font-family: var(--font-main);
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.9; }
 
-  /* ===== RIGHT PANEL ===== */
-  .right { background: var(--sidebar); border-left: 1px solid var(--border-soft); overflow-y: auto; padding: 22px 20px; display: flex; flex-direction: column; gap: 26px; }
-  .panel-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; }
-  .panel-title .more { color: var(--muted-dim); font-size: 12px; font-weight:500; cursor: pointer; text-transform:none; letter-spacing:0; }
+  /* ─── ANNOUNCEMENT BAR ─── */
+  .announcement {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 101;
+    height: 48px;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: #000;
+    cursor: pointer;
+  }
 
-  .health { display: flex; align-items: center; gap: 18px; }
-  .ring { position: relative; width: 92px; height: 92px; flex-shrink: 0; }
-  .ring svg { transform: rotate(-90deg); }
-  .ring .val { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .ring .val .n { font-size: 24px; font-weight: 600; font-family: var(--mono); letter-spacing: -1px; }
-  .ring .val .l { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; font-weight:600; }
-  .health .legend { font-size: 12.5px; line-height: 1.9; font-family: var(--mono); font-weight:500; }
-  .health .legend .row { display: flex; align-items: center; gap: 7px; }
-  .health .legend .d { width: 7px; height: 7px; border-radius: 2px; }
-  .health .legend .ct { color: var(--muted); margin-left: auto; }
+  body.has-bar nav { top: 48px; }
+  body.has-bar { padding-top: 100px; }
+  body:not(.has-bar) { padding-top: 52px; }
 
-  .gauge { margin-bottom: 16px; }
-  .gauge:last-child { margin-bottom: 0; }
-  .gauge .g-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
-  .gauge .g-name { font-size: 13px; color: var(--text); font-weight: 500; display:flex; align-items:center; gap:7px; }
-  .gauge .g-name i { font-size: 15px; color: var(--muted); }
-  .gauge .g-val { font-size: 13px; font-family: var(--mono); font-weight:500; color: var(--muted); }
-  .gauge .track { height: 7px; background: #161616; border-radius: 4px; overflow: hidden; }
-  .gauge .fill { height: 100%; border-radius: 4px; }
+  /* ─── HERO ─── */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 80px 24px 0;
+    position: relative;
+    overflow: hidden;
+  }
 
-  .alert { display: flex; gap: 11px; padding: 12px 0; border-bottom: 1px solid var(--border-soft); }
-  .alert:last-child { border-bottom: none; }
-  .alert .ic { font-size: 17px; padding-top:1px; flex-shrink:0; }
-  .a-crit { color: var(--accent-bright); }
-  .a-warn { color: var(--yellow); }
-  .a-info { color: var(--blue); }
-  .alert .a-body { flex: 1; }
-  .alert .a-title { font-size: 13.5px; font-weight: 500; line-height: 1.4; }
-  .alert .a-meta { font-size: 11.5px; color: var(--muted); font-family: var(--mono); font-weight:500; margin-top: 3px; display: flex; gap: 8px; }
-  .alert .a-tag { color: var(--accent-bright); }
+  .hero-grid { display: none; }
 
-  .deploy { display: flex; align-items: center; gap: 11px; padding: 11px 0; border-bottom: 1px solid var(--border-soft); }
-  .deploy:last-child { border-bottom: none; }
-  .deploy .d-ico { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size:15px; }
-  .d-ok { background: rgba(46,204,113,.1); color: var(--green); }
-  .d-fail { background: rgba(255,69,0,.1); color: var(--accent-bright); }
-  .deploy .d-body { flex: 1; line-height: 1.35; }
-  .deploy .d-title { font-size: 13px; font-weight: 600; }
-  .deploy .d-title span { color:var(--muted); font-family:var(--mono); font-size:11px; font-weight:500; }
-  .deploy .d-meta { font-size: 11px; color: var(--muted); font-family: var(--mono); font-weight:500; margin-top: 2px; }
-  .deploy .d-time { font-size: 11px; color: var(--muted-dim); font-family: var(--mono); font-weight:500; }
+  .hero-inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    max-width: 800px;
+    width: 100%;
+  }
+
+  .hero-inner .badge       { margin-bottom: 24px; }
+  .hero-inner .hero-heading { margin-bottom: 16px; }
+  .hero-inner .hero-subtext { margin-bottom: 32px; }
+
+  /* ─── HERO DASHBOARD — Cursor Figma spec ─── */
+  .hero-dashboard-wrap {
+    width: 100%;
+    max-width: 1080px;
+    margin-top: 56px;
+    position: relative;
+  }
+
+  .hero-dashboard-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, var(--bg));
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* outer shell — Figma: #14120B, border-radius 10px, shadow */
+  .hero-dashboard {
+    width: 100%;
+    background: #0A0A0A;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 28px 70px rgba(0,0,0,0.14), 0px 14px 32px rgba(0,0,0,0.1), 0px 0px 0px 1px rgba(237,236,236,0.1);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* title bar — Figma: height 28px, padding 0 8px */
+  .cur-titlebar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 8px;
+    height: 28px;
+    background: #0A0A0A;
+    flex-shrink: 0;
+  }
+  .cur-dots { display: flex; gap: 6px; align-items: center; }
+  .cur-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #333333;
+  }
+  .cur-title {
+    font-family: 'Geist', sans-serif;
+    font-size: 12px; font-weight: 400;
+    color: #EDECEC; opacity: 0.7;
+    letter-spacing: 0.01em;
+  }
+  .cur-titlebar-right { width: 42px; }
+
+  /* body row — 3 cols */
+  .cur-body {
+    display: grid;
+    grid-template-columns: 220px 340px 1fr;
+    height: 592px;
+    overflow: hidden;
+  }
+
+  /* ── LEFT SIDEBAR — 220px ── */
+  .cur-sidebar {
+    width: 220px;
+    border-right: 1px solid #1E1E1E;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #0A0A0A;
+  }
+
+  /* section label — Figma: 11px, uppercase, letter-spacing 0.048px */
+  .cur-section-label {
+    padding: 4px 12px;
+    font-family: 'Geist', sans-serif;
+    font-size: 11px; font-weight: 400;
+    color: rgba(237,236,236,0.6);
+    letter-spacing: 0.048px;
+    text-transform: uppercase;
+    line-height: 14px;
+  }
+
+  /* sidebar list item — Figma: padding 10px 12px 10px 14px, gap 8px */
+  .cur-item {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 10px 12px 10px 14px;
+    gap: 8px;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .cur-item:hover { background: rgba(237,236,236,0.03); }
+  .cur-item.active { background: #111111; }
+
+  .cur-item-icon {
+    width: 16px; height: 16px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .cur-item-icon svg { opacity: 0.6; }
+  .cur-item.active .cur-item-icon svg { opacity: 1; }
+
+  .cur-item-content { display: flex; flex-direction: column; gap: 1px; flex: 1; }
+
+  .cur-item-row {
+    display: flex; flex-direction: row;
+    justify-content: space-between; align-items: flex-start;
+    width: 100%;
+  }
+
+  /* item title — Figma: 12px Geist, color rgba(237,236,236,0.6) */
+  .cur-item-title {
+    font-family: 'Geist', sans-serif;
+    font-size: 12px; font-weight: 400;
+    color: rgba(237,236,236,0.6);
+    line-height: 16px;
+  }
+  .cur-item.active .cur-item-title { color: #EDECEC; }
+
+  .cur-item-time {
+    font-family: 'Geist', sans-serif;
+    font-size: 10.8px; font-weight: 400;
+    color: rgba(237,236,236,0.4);
+    letter-spacing: 0.048px;
+    line-height: 14px;
+    flex-shrink: 0;
+  }
+
+  /* item sub — Figma: 11px, color rgba(237,236,236,0.4) */
+  .cur-item-sub {
+    font-family: 'Geist', sans-serif;
+    font-size: 11px; font-weight: 400;
+    color: rgba(237,236,236,0.4);
+    letter-spacing: 0.048px;
+    line-height: 14px;
+  }
+
+  /* diff stats */
+  .cur-diff { display: flex; align-items: center; gap: 4px; }
+  .cur-add { font-family:'Geist',sans-serif; font-size:10.7px; color:#1F8A65; letter-spacing:0.048px; }
+  .cur-del { font-family:'Geist',sans-serif; font-size:10.5px; color:#CF2D56; letter-spacing:0.048px; }
+  .cur-sep { font-family:'Geist',sans-serif; font-size:11px; color:rgba(237,236,236,0.6); }
+
+  /* ── CENTER CHAT PANEL — 340px ── */
+  .cur-chat {
+    width: 340px;
+    background: #0A0A0A;
+    border-right: 1px solid #1E1E1E;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* chat header — Figma: padding 7px 12px, height 32px */
+  .cur-chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 12px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+  .cur-chat-title {
+    font-family: 'Geist', sans-serif;
+    font-size: 12px; font-weight: 400;
+    color: #EDECEC; flex: 1;
+  }
+
+  /* chat scroll area */
+  .cur-chat-body {
+    flex: 1; overflow-y: auto;
+    padding: 2px 12px 0;
+  }
+  .cur-chat-body::-webkit-scrollbar { width: 3px; }
+  .cur-chat-body::-webkit-scrollbar-thumb { background: #333333; }
+
+  /* user message bubble — Figma: #1B1913, border rgba(237,236,236,0.1), radius 8px */
+  .cur-msg-user {
+    box-sizing: border-box;
+    padding: 6px 8px;
+    background: #161616;
+    border: 1px solid rgba(237,236,236,0.1);
+    border-radius: 8px;
+    font-family: 'Geist', sans-serif;
+    font-size: 13px; font-weight: 400;
+    color: #EDECEC; line-height: 17px;
+    margin-bottom: 4px;
+  }
+
+  /* gradient fades */
+  .cur-fade-down { height: 8px; background: linear-gradient(180deg, #0A0A0A 0%, rgba(0,0,0,0) 100%); }
+  .cur-fade-up   { height: 8px; background: linear-gradient(0deg, #0A0A0A 0%, rgba(0,0,0,0) 100%); }
+
+  /* thought/action lines — Figma: 12px, rgba(237,236,236,0.6) */
+  .cur-action-line {
+    display: flex; align-items: center; gap: 4px;
+    padding: 4px 0;
+    font-family: 'Geist', sans-serif;
+    font-size: 12px; font-weight: 400;
+    color: rgba(237,236,236,0.6); line-height: 16px;
+  }
+  .cur-action-dim { opacity: 0.6; }
+  .cur-file-ref {
+    font-family: 'Geist', sans-serif;
+    font-size: 11.6px; color: rgba(237,236,236,0.6);
+  }
+
+  /* file changed chip — Figma: #1B1913, border, radius 8px */
+  .cur-file-chip {
+    box-sizing: border-box;
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 8px 8px;
+    background: #161616; border: 1px solid rgba(237,236,236,0.1);
+    border-radius: 8px; margin: 2px 0;
+  }
+  .cur-file-chip-name {
+    font-family: 'Geist', sans-serif;
+    font-size: 11.6px; color: #EDECEC;
+  }
+  .cur-file-chip-add { font-family:'Geist',sans-serif; font-size:11.6px; color:#1F8A65; }
+
+  /* agent text */
+  .cur-agent-text {
+    font-family: 'Geist', sans-serif;
+    font-size: 13px; color: #EDECEC; line-height: 17px;
+    padding: 0 0 4px;
+  }
+  .cur-code-inline {
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px; background: #1E1E1E;
+    border-radius: 2px; padding: 0 3px; color: #EDECEC;
+  }
+
+  /* questions card — Figma: #1B1913, border, radius 8px */
+  .cur-questions-card {
+    box-sizing: border-box;
+    background: #161616; border: 1px solid rgba(237,236,236,0.1);
+    border-radius: 8px; padding: 0; margin: 8px 0;
+  }
+  .cur-q-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 6px 0 4px; height: 24px;
+  }
+  .cur-q-label {
+    padding: 0 4px;
+    font-family: 'Geist', sans-serif; font-size: 11px;
+    color: rgba(237,236,236,0.6); letter-spacing: 0.048px;
+  }
+  .cur-q-nav { display: flex; gap: 2px; }
+  .cur-q-btn {
+    width: 18px; height: 18px; background: none; border: none;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: rgba(237,236,236,0.6); font-size: 12px;
+  }
+  .cur-q-body { padding: 3px 8px 8px; display: flex; flex-direction: column; gap: 8px; }
+  .cur-q-title {
+    font-family: 'Geist', sans-serif; font-size: 11.8px;
+    color: #EDECEC; line-height: 16px; padding-bottom: 2px;
+  }
+  .cur-q-options { display: flex; flex-direction: column; gap: 2px; }
+  .cur-q-option {
+    display: flex; align-items: center; gap: 8px;
+    padding: 4px 6px 4px 0; border-radius: 4px;
+  }
+  .cur-q-num {
+    box-sizing: border-box;
+    width: 18px; height: 18px;
+    border: 1px solid rgba(237,236,236,0.1); border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Geist', sans-serif; font-size: 11px;
+    color: rgba(237,236,236,0.6); letter-spacing: 0.048px;
+    flex-shrink: 0;
+  }
+  .cur-q-text {
+    font-family: 'Geist', sans-serif; font-size: 12px;
+    color: rgba(237,236,236,0.6); line-height: 16px;
+  }
+  .cur-q-actions {
+    display: flex; justify-content: flex-end; align-items: center;
+    gap: 8px; padding: 2px 0 0;
+  }
+  .cur-btn-skip {
+    padding: 2px 6px; border-radius: 4px; border: none; background: none; cursor: pointer;
+    font-family: 'Geist', sans-serif; font-size: 12px;
+    color: rgba(237,236,236,0.6);
+  }
+  /* amber CTA — Figma: #C08532 */
+  .cur-btn-amber {
+    padding: 2px 6px; border-radius: 4px; border: none;
+    background: #C08532; cursor: pointer;
+    font-family: 'Geist', sans-serif; font-size: 12px; color: #fff;
+  }
+
+  /* input bar — Figma: #1B1913, border, radius 8px */
+  .cur-input-bar {
+    flex-shrink: 0;
+    margin: 0 12px 12px;
+    box-sizing: border-box;
+    background: #161616; border: 1px solid rgba(237,236,236,0.1);
+    border-radius: 8px; padding: 0;
+  }
+  .cur-textarea {
+    padding: 8px 8px 6px;
+    font-family: 'Geist', sans-serif; font-size: 12.7px;
+    color: rgba(237,236,236,0.5); line-height: 17px;
+  }
+  .cur-input-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 4px 8px 8px;
+  }
+  .cur-input-pills { display: flex; gap: 8px; align-items: center; }
+  .cur-pill-amber {
+    display: flex; align-items: center; gap: 4px;
+    padding: 3px 8px; border-radius: 999px;
+    background: rgba(192,133,50,0.15);
+    font-family: 'Geist', sans-serif; font-size: 11px; color: #C08532;
+    letter-spacing: 0.048px; cursor: pointer;
+  }
+  .cur-pill-dim {
+    display: flex; align-items: center; gap: 2px;
+    padding: 3px 0; border-radius: 8px; cursor: pointer;
+    font-family: 'Geist', sans-serif; font-size: 11px;
+    color: rgba(237,236,236,0.6); letter-spacing: 0.048px;
+  }
+  .cur-send-btn {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #1E1E1E; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(237,236,236,0.6); font-size: 10px;
+  }
+
+  /* ── RIGHT EDITOR PANEL — 520px ── */
+  .cur-editor {
+    display: flex; flex-direction: column;
+    background: #000000; overflow: hidden;
+  }
+
+  /* tab bar */
+  .cur-tabbar {
+    display: flex; align-items: stretch;
+    height: 30px; flex-shrink: 0; overflow: hidden;
+    border-bottom: 1px solid #333333;
+  }
+  .cur-tab {
+    display: flex; align-items: center;
+    padding: 0 8px 0 12px; gap: 8px;
+    font-family: 'Geist', sans-serif; font-size: 12px; font-weight: 400;
+    color: #525252; cursor: pointer;
+    background: #000000; white-space: nowrap;
+    border-right: 1px solid #333333;
+  }
+  .cur-tab.active { background: #111111; color: #FFFFFF; }
+  .cur-tab-close {
+    width: 14px; height: 14px; display: flex; align-items: center; justify-content: center;
+    opacity: 0.4; font-size: 10px; color: #A3A3A3;
+  }
+  .cur-tab.active .cur-tab-close { opacity: 0.7; }
+
+  /* editor toolbar */
+  .cur-editor-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 8px 0 12px; height: 32px; flex-shrink: 0;
+    background: #111111; border-bottom: 1px solid #333333;
+  }
+  .cur-breadcrumb {
+    display: flex; align-items: center; gap: 2px;
+    font-family: 'Geist', sans-serif; font-size: 12px;
+    color: #525252;
+  }
+  .cur-breadcrumb-active { color: #A3A3A3; font-size: 11.6px; }
+  .cur-toolbar-right { display: flex; gap: 6px; align-items: center; }
+  .cur-toolbar-btn {
+    display: flex; align-items: center; gap: 2px;
+    padding: 2px 6px; border-radius: 4px; cursor: pointer;
+    font-family: 'Geist', sans-serif; font-size: 12px;
+    color: #A3A3A3; background: none; border: none;
+  }
+  .cur-btn-build {
+    padding: 2px 8px; border-radius: 4px; border: none; cursor: pointer;
+    background: #2B5BF3; color: #fff;
+    font-family: 'Geist', sans-serif; font-size: 12px; font-weight: 500;
+  }
+
+  /* editor content */
+  .cur-editor-content {
+    flex: 1; overflow-y: auto;
+    padding: 20px 32px 24px;
+    background: #000000;
+  }
+  .cur-editor-content::-webkit-scrollbar { width: 3px; }
+  .cur-editor-content::-webkit-scrollbar-thumb { background: #333333; }
+
+  /* doc typography */
+  .cur-h1 {
+    font-family: 'Geist', sans-serif; font-size: 20px; font-weight: 700;
+    color: #FFFFFF; line-height: 31px; margin-bottom: 0;
+  }
+  .cur-body-text {
+    font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 400;
+    color: #A3A3A3; line-height: 20px; margin: 8px 0 0;
+  }
+  .cur-body-text strong { color: #FFFFFF; font-weight: 500; }
+  .cur-h2 {
+    font-family: 'Geist', sans-serif; font-size: 13.9px; font-weight: 600;
+    color: #FFFFFF; line-height: 22px; margin: 16px 0 0;
+  }
+  .cur-tasks-label {
+    font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 400;
+    color: #525252; line-height: 20px; margin: 20px 0 4px;
+  }
+  .cur-divider {
+    width: 100%; height: 1px; border-radius: 999px;
+    background: #333333; margin-bottom: 8px;
+  }
+  .cur-task {
+    display: flex; align-items: center; gap: 8px;
+    padding: 2px 0; margin-bottom: 4px;
+  }
+  .cur-task-check {
+    box-sizing: border-box;
+    width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+    border: 1px solid #333333;
+  }
+  .cur-task-text {
+    font-family: 'Geist', sans-serif; font-size: 12.8px;
+    color: #A3A3A3; line-height: 20px;
+  }
+  .cur-task.dim { opacity: 0.3; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px 8px 8px;
+    background: rgba(43, 91, 243, 0.1);
+    border: 1px solid rgba(43, 91, 243, 0.35);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .badge-icon {
+    width: 20px; height: 20px;
+    background: var(--accent);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #000;
+    font-family: var(--font-ui);
+  }
+
+  .hero-heading {
+    text-align: center;
+  }
+
+  .hero-heading h1 {
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 1.17;
+    text-transform: capitalize;
+  }
+
+  .hero-heading h1 .accent-line {
+    color: var(--accent);
+    display: block;
+  }
+
+  .hero-subtext {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text-muted);
+    text-align: center;
+    max-width: 420px;
+    line-height: 1.5;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .btn-lg {
+    padding: 12.5px 24px 13.5px;
+    font-family: var(--font-ui);
+    font-size: 18px;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.2s;
+  }
+
+  .btn-lg-primary {
+    background: var(--text);
+    color: #000;
+  }
+  .btn-lg-primary:hover { opacity: 0.9; }
+
+  .btn-lg-outline {
+    background: #000;
+    color: var(--text);
+    border: 1px solid var(--text);
+  }
+  .btn-lg-outline:hover { background: rgba(255,255,255,0.05); }
+
+  /* ─── LOGO STRIP ─── */
+  .logo-strip {
+    border-top: 1px solid var(--border);
+    padding: 24px 24px 24px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .strip-label {
+    font-size: 16px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    font-weight: 400;
+  }
+
+  .strip-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  .strip-logos {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent 0%, black 5%, black 95%, transparent 100%);
+    flex: 1;
+  }
+
+  .strip-logo {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dim);
+    white-space: nowrap;
+    font-family: var(--font-ui);
+    letter-spacing: 0.02em;
+  }
+
+  /* ─── SECTION ─── */
+  .section {
+    padding: 80px 24px;
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .section-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .section-header h2 {
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.375;
+    text-align: center;
+    text-transform: capitalize;
+  }
+
+  .section-header p {
+    font-size: 16px;
+    color: var(--text-muted);
+    text-align: center;
+    max-width: 480px;
+  }
+
+  /* ─── PROBLEM SECTION ─── */
+  .problem-section {
+    border-top: 1px solid var(--border);
+    padding: 80px 24px;
+  }
+
+  .problem-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .problem-heading {
+    max-width: 480px;
+    margin-bottom: 48px;
+  }
+
+  .problem-heading h2 {
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.375;
+    margin-bottom: 16px;
+  }
+
+  .problem-heading p {
+    font-size: 16px;
+    color: var(--text-muted);
+  }
+
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--border);
+  }
+
+  .problem-card {
+    padding: 32px;
+    border-right: 1px solid var(--border);
+  }
+  .problem-card:last-child { border-right: none; }
+
+  .problem-tag {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+    margin-bottom: 16px;
+  }
+
+  .problem-card h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .problem-card p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ─── ALIGNMENT SECTION ─── */
+  .align-section {
+    border-top: 1px solid var(--border);
+    padding: 80px 24px;
+  }
+
+  .align-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .align-heading {
+    margin-bottom: 48px;
+  }
+
+  .align-heading h2 {
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.375;
+    max-width: 580px;
+  }
+
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .benefit-card {
+    padding: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+  .benefit-chip {
+    display: inline-block;
+    padding: 2px 10px;
+    background: var(--accent-dim);
+    border: 1px solid rgba(110,231,183,0.3);
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    margin-bottom: 16px;
+  }
+
+  .benefit-card h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .benefit-card p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ─── HOW IT WORKS ─── */
+  .how-section {
+    border-top: 1px solid var(--border);
+    padding: 80px 24px;
+  }
+
+  .how-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .how-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 56px;
+  }
+
+  .how-header h2 {
+    font-size: 32px;
+    font-weight: 400;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+  .step:last-child { border-bottom: none; }
+
+  .step-label {
+    padding: 40px 32px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .step-num {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    font-family: var(--font-mono);
+  }
+
+  .step-title {
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .step-body {
+    padding: 40px 32px;
+  }
+
+  .step-body p {
+    font-size: 16px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 640px;
+  }
+
+  .step-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  /* ─── DEMO WIDGET ─── */
+  .demo-section {
+    border-top: 1px solid var(--border);
+    padding: 80px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .demo-section::before { display: none; }
+
+  .demo-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .demo-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+
+  .demo-header h2 {
+    font-size: 32px;
+    font-weight: 400;
+  }
+
+  .demo-header p {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 480px;
+  }
+
+  /* agent activity panel */
+  .agent-panel {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .agent-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .agent-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .agent-label {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 6px rgba(34,197,94,0.5);
+  }
+
+  .agent-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .agent-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .agent-left {
+    padding: 24px;
+    border-right: 1px solid var(--border);
+  }
+
+  .agent-right {
+    padding: 24px;
+  }
+
+  .agent-section-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .commit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .commit-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+  }
+
+  .commit-icon {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #000;
+    flex-shrink: 0;
+    font-family: var(--font-ui);
+  }
+
+  .commit-text {
+    flex: 1;
+  }
+
+  .commit-title {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text);
+    font-family: var(--font-mono);
+  }
+
+  .commit-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .commit-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+  }
+
+  .badge-pass {
+    background: rgba(34,197,94,0.1);
+    color: var(--success);
+    border: 1px solid rgba(34,197,94,0.3);
+  }
+
+  .badge-review {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid rgba(110,231,183,0.3);
+  }
+
+  .badge-waiting {
+    background: rgba(163,163,163,0.1);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  .misalignment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .misalign-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(239,68,68,0.03);
+    border: 1px solid rgba(239,68,68,0.15);
+    border-radius: var(--radius-sm);
+  }
+
+  .misalign-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--danger);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .misalign-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    line-height: 1.5;
+  }
+
+  .align-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(110,231,183,0.03);
+    border: 1px solid rgba(110,231,183,0.15);
+    border-radius: var(--radius-sm);
+  }
+
+  .align-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  /* ─── FAQ ─── */
+  .faq-section {
+    border-top: 1px solid var(--border);
+    padding: 80px 24px;
+  }
+
+  .faq-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+  }
+
+  .faq-aside {
+    width: 400px;
+    flex-shrink: 0;
+    padding: 24px 40px;
+  }
+
+  .faq-aside h2 {
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.375;
+    margin-bottom: 12px;
+  }
+
+  .faq-aside p {
+    font-size: 16px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+
+  .faq-aside a {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 16px;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .faq-list {
+    flex: 1;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+  }
+  .faq-item:last-child { border-bottom: none; }
+
+  .faq-q {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    cursor: pointer;
+    gap: 16px;
+  }
+
+  .faq-q-text {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .faq-toggle {
+    width: 24px; height: 24px;
+    border: 1.5px solid var(--text);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .faq-toggle::after {
+    content: '+';
+    font-size: 16px;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .faq-a {
+    padding: 0 24px 24px;
+    font-size: 14px;
+    line-height: 1.71;
+    color: var(--text-muted);
+    display: none;
+  }
+
+  .faq-item.open .faq-a { display: block; }
+  .faq-item.open .faq-toggle::after { content: '−'; }
+
+  /* ─── CTA ─── */
+  .cta-section {
+    position: relative;
+    overflow: hidden;
+    padding: 80px 24px 120px;
+    text-align: center;
+  }
+
+  .cta-grid { display: none; }
+
+  .cta-inner {
+    position: relative;
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .cta-inner h2 {
+    font-size: 48px;
+    font-weight: 400;
+    line-height: 1.375;
+  }
+
+  .cta-inner h2 span { color: var(--accent); }
+
+  .cta-sub {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 440px;
+  }
+
+  .cta-form {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .cta-input {
+    padding: 12px 16px;
+    background: transparent;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: var(--font-main);
+    font-size: 16px;
+    width: 280px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .cta-input:focus { border-color: var(--accent); }
+  .cta-input::placeholder { color: var(--text-dim); }
+
+  .btn-cta {
+    padding: 12px 24px;
+    background: var(--text);
+    color: #000;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-ui);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+  .btn-cta:hover { opacity: 0.9; }
+
+  /* ─── STATS ─── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+  }
+
+  .stat-card {
+    position: relative;
+    padding: 24px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    text-align: center;
+    margin: 0 6px;
+    overflow: hidden;
+  }
+
+  .stat-label {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 4px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+  }
+
+  .stat-value {
+    font-size: 40px;
+    font-weight: 500;
+    line-height: 1.1;
+    font-family: var(--font-main);
+  }
+
+  .stat-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    font-family: var(--font-mono);
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 24px;
+    background: var(--bg);
+  }
+
+  .footer-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .footer-name {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .footer-divider {
+    width: 1px;
+    height: 24px;
+    background: #BFBFBF;
+  }
+
+  .footer-socials {
+    display: flex;
+    gap: 16px;
+  }
+
+  .footer-social {
+    width: 20px; height: 20px;
+    color: var(--text-muted);
+  }
+
+  .footer-nav {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+    flex-wrap: wrap;
+  }
+
+  .footer-nav a {
+    font-size: 16px;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-nav a:hover { color: var(--text); }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+  }
+
+  .footer-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+  }
+
+  .status-green {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  .footer-copy {
+    font-size: 16px;
+    color: var(--text-muted);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 </style>
 </head>
-<body>
-  <div class="app">
+<body class="has-bar">
 
-    <!-- ===== LEFT SIDEBAR ===== -->
-    <aside class="sidebar">
-      <div class="brand">
-        <span class="logo"><i class="hgi-stroke hgi-pulse-rectangle-01"></i></span>
-        <span class="name">Pulse</span>
-      </div>
+<!-- Announcement Bar -->
+<div class="announcement">Scott AI — Alignment Layer for Coding Agents. Join Waitlist →</div>
 
-      <div class="nav-section">
-        <div class="nav-label">Monitor</div>
-        <div class="nav-item active"><i class="hgi-stroke hgi-dashboard-square-01"></i>Overview</div>
-        <div class="nav-item"><i class="hgi-stroke hgi-server-stack-01"></i>Services <span class="count">21</span></div>
-        <div class="nav-item"><i class="hgi-stroke hgi-analytics-up"></i>Traces</div>
-        <div class="nav-item"><i class="hgi-stroke hgi-alert-02"></i>Alerts <span class="count alert">7</span></div>
-        <div class="nav-item"><i class="hgi-stroke hgi-file-02"></i>Logs</div>
-      </div>
+<!-- Nav -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-dot"></div>
+    Scott AI
+  </a>
+  <ul class="nav-links">
+    <li><a href="#">Product</a></li>
+    <li><a href="#">How It Works</a></li>
+    <li><a href="#">Blog</a></li>
+    <li><a href="#">Pricing</a></li>
+    <li><a href="#">Docs</a></li>
+    <li><a href="#">Roadmap</a></li>
+  </ul>
+  <div class="nav-cta">
+    <button class="btn-ghost">Login</button>
+    <button class="btn-primary">Join Waitlist</button>
+  </div>
+</nav>
 
-      <div class="nav-section">
-        <div class="nav-label">Manage</div>
-        <div class="nav-item"><i class="hgi-stroke hgi-database"></i>Databases</div>
-        <div class="nav-item"><i class="hgi-stroke hgi-settings-02"></i>Settings</div>
-      </div>
-
-      <div class="sidebar-footer">
-        <div class="user-card">
-          <span class="avatar">VM</span>
-          <div class="info"><div class="nm">Vuk M.</div><div class="role">Platform · Admin</div></div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- ===== MAIN ===== -->
-    <main class="main">
-      <div class="topbar">
-        <div>
-          <h1>Overview</h1>
-          <div class="crumb">production · all clusters</div>
-        </div>
-        <div class="topbar-right">
-          <span class="live"><span class="dot"></span>LIVE</span>
-          <div class="icon-btn"><i class="hgi-stroke hgi-notification-02"></i></div>
-          <div class="icon-btn"><i class="hgi-stroke hgi-add-01"></i></div>
-        </div>
-      </div>
-
-      <div class="kpis">
-        <div class="kpi"><div class="k-label">Requests / min</div><div class="k-val">48.2K</div><div class="k-sub up"><i class="hgi-stroke hgi-arrow-up-right-01"></i>12.4% <span class="muted">vs last hr</span></div></div>
-        <div class="kpi"><div class="k-label">P95 Latency</div><div class="k-val">312<small>ms</small></div><div class="k-sub up"><i class="hgi-stroke hgi-arrow-up-right-01"></i>42ms <span class="muted">above SLO</span></div></div>
-        <div class="kpi"><div class="k-label">Error Rate</div><div class="k-val">0.84<small>%</small></div><div class="k-sub down"><i class="hgi-stroke hgi-arrow-down-right-01"></i>0.3% <span class="muted">recovering</span></div></div>
-        <div class="kpi"><div class="k-label">Uptime 30d</div><div class="k-val">99.94<small>%</small></div><div class="k-sub down"><i class="hgi-stroke hgi-checkmark-circle-02"></i><span class="muted">21 up · 0 down</span></div></div>
-      </div>
-
-      <div class="controls">
-        <div class="pill">Hourly <i class="hgi-stroke hgi-arrow-down-01 chev"></i></div>
-        <div class="stepper">
-          <div class="arrow"><i class="hgi-stroke hgi-arrow-left-01"></i></div>
-          <div class="label">Last 7 days</div>
-          <div class="arrow"><i class="hgi-stroke hgi-arrow-right-01"></i></div>
-        </div>
-        <div class="pill">Region: All <i class="hgi-stroke hgi-arrow-down-01 chev"></i></div>
-        <div class="pill right"><span class="amt">2.41B</span><span class="lbl">total requests</span></div>
-      </div>
-
-      <div class="chart-wrap">
-        <div class="badge"><span class="req">412ms</span><span class="delta">+42%</span></div>
-        <div class="avg-label">avg latency · 218ms</div>
-        <div class="bars" id="bars"><div class="threshold" style="bottom:62%"><span>SLO 300ms</span></div></div>
-        <div class="axis"><span>Mon</span><span>Wed</span><span>Fri</span><span>Sun</span></div>
-      </div>
-
-      <div class="table-head">
-        <div class="reg-count"><b>7</b> services with regressions</div>
-        <div class="search"><i class="hgi-stroke hgi-search-01"></i><input placeholder="Search services, regions, traces…" /></div>
-        <div class="add-filter"><i class="hgi-stroke hgi-filter"></i>Add filter</div>
-      </div>
-
-      <table>
-        <thead><tr><th style="width:30px"></th><th>Service</th><th>Status</th><th>Trend 24h</th><th class="num">Req/min</th><th class="num">P95</th><th class="num">Δ</th></tr></thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </main>
-
-    <!-- ===== RIGHT PANEL ===== -->
-    <aside class="right">
-      <div>
-        <div class="panel-title">Fleet Health</div>
-        <div class="health">
-          <div class="ring">
-            <svg width="92" height="92" viewBox="0 0 92 92">
-              <circle cx="46" cy="46" r="40" fill="none" stroke="#161616" stroke-width="8"/>
-              <circle cx="46" cy="46" r="40" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="38"/>
-            </svg>
-            <div class="val"><span class="n">85</span><span class="l">score</span></div>
-          </div>
-          <div class="legend">
-            <div class="row"><span class="d" style="background:var(--green)"></span>Healthy <span class="ct">14</span></div>
-            <div class="row"><span class="d" style="background:var(--yellow)"></span>Degraded <span class="ct">5</span></div>
-            <div class="row"><span class="d" style="background:var(--accent-bright)"></span>Critical <span class="ct">2</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="panel-title">Resource Usage</div>
-        <div class="gauge"><div class="g-top"><span class="g-name"><i class="hgi-stroke hgi-computer"></i>CPU</span><span class="g-val">72%</span></div><div class="track"><div class="fill" style="width:72%;background:var(--yellow)"></div></div></div>
-        <div class="gauge"><div class="g-top"><span class="g-name"><i class="hgi-stroke hgi-ram"></i>Memory</span><span class="g-val">58%</span></div><div class="track"><div class="fill" style="width:58%;background:var(--green)"></div></div></div>
-        <div class="gauge"><div class="g-top"><span class="g-name"><i class="hgi-stroke hgi-database-01"></i>Disk I/O</span><span class="g-val">91%</span></div><div class="track"><div class="fill" style="width:91%;background:var(--accent)"></div></div></div>
-        <div class="gauge"><div class="g-top"><span class="g-name"><i class="hgi-stroke hgi-wifi-01"></i>Network</span><span class="g-val">44%</span></div><div class="track"><div class="fill" style="width:44%;background:var(--green)"></div></div></div>
-      </div>
-
-      <div>
-        <div class="panel-title">Active Alerts <span class="more">View all</span></div>
-        <div class="alert"><i class="hgi-stroke hgi-alert-02 ic a-crit"></i><div class="a-body"><div class="a-title">api-gateway P95 breached SLO</div><div class="a-meta"><span class="a-tag">critical</span><span>2m ago</span></div></div></div>
-        <div class="alert"><i class="hgi-stroke hgi-alert-circle ic a-warn"></i><div class="a-body"><div class="a-title">payments-svc error rate climbing</div><div class="a-meta"><span>warning</span><span>14m ago</span></div></div></div>
-        <div class="alert"><i class="hgi-stroke hgi-alert-circle ic a-warn"></i><div class="a-body"><div class="a-title">postgres-primary connection pool 88%</div><div class="a-meta"><span>warning</span><span>31m ago</span></div></div></div>
-        <div class="alert"><i class="hgi-stroke hgi-information-circle ic a-info"></i><div class="a-body"><div class="a-title">edge-cdn cache hit ratio improved</div><div class="a-meta"><span>info</span><span>1h ago</span></div></div></div>
-      </div>
-
-      <div>
-        <div class="panel-title">Recent Deploys</div>
-        <div class="deploy"><div class="d-ico d-ok"><i class="hgi-stroke hgi-tick-02"></i></div><div class="d-body"><div class="d-title">auth-service <span>v2.14.0</span></div><div class="d-meta">deployed · us-west-2</div></div><span class="d-time">8m</span></div>
-        <div class="deploy"><div class="d-ico d-fail"><i class="hgi-stroke hgi-cancel-01"></i></div><div class="d-body"><div class="d-title">api-gateway <span>v3.02.1</span></div><div class="d-meta">rolled back · us-east-1</div></div><span class="d-time">41m</span></div>
-        <div class="deploy"><div class="d-ico d-ok"><i class="hgi-stroke hgi-tick-02"></i></div><div class="d-body"><div class="d-title">search-index <span>v1.9.4</span></div><div class="d-meta">deployed · eu-west-1</div></div><span class="d-time">2h</span></div>
-      </div>
-    </aside>
-
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="badge">
+      <span class="badge-icon">AI</span>
+      Agent-Native Alignment Engine
+    </div>
+    <div class="hero-heading">
+      <h1>
+        <span class="accent-line">Where Builders Align</span>
+        On Their Best Plan
+      </h1>
+    </div>
+    <p class="hero-subtext">
+      Helping teams delegate more work to coding agents with less token waste. Align on intent first — then let your agent execute end to end.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-lg btn-lg-primary">Join Waitlist</button>
+      <button class="btn-lg btn-lg-outline">Book A Demo</button>
+    </div>
   </div>
 
-  <script>
-    const data = [
-      [38,0],[44,0],[34,0],[40,0],[36,0],[42,0],[33,0],
-      [55,1],[38,0],[44,0],[35,0],[41,0],
-      [56,2],[30,0],[34,0],[66,2],[100,3],[42,0],[28,0],[36,0],
-      [62,1],[38,0],[33,0],[44,0],[36,0],[40,0],[34,0],[38,0],[42,0]
-    ];
-    const colors = ['var(--bar-base)','#7a2410','#9c2e0f','var(--accent)'];
-    const edges  = ['var(--bar-base-edge)','#8f2c14','#b53611','var(--accent-bright)'];
-    const bars = document.getElementById('bars');
-    data.forEach(([h,c],i) => {
-      const b = document.createElement('div');
-      b.className = 'bar';
-      b.style.height = h + '%'; b.style.background = colors[c]; b.style.borderColor = edges[c];
-      b.innerHTML = `<span class="tip">${Math.round(140+h*2.7)}ms · h${i}</span>`;
-      bars.appendChild(b);
-    });
+  <!-- Dashboard — Cursor Figma spec, Scott AI content -->
+  <div class="hero-dashboard-wrap">
+    <div class="hero-dashboard">
 
-    const icons = {
-      api: 'hgi-api', db: 'hgi-database', auth: 'hgi-shield-key',
-      queue: 'hgi-queue-02', cdn: 'hgi-global', pay: 'hgi-credit-card', search: 'hgi-search-01'
-    };
-    function spark(seed, color){ let h=''; for(let i=0;i<12;i++){ const v=6+Math.round((Math.sin(seed+i*0.9)*0.5+0.5)*18); h+=`<i style="height:${v}px;background:${color}"></i>`;} return `<span class="spark">${h}</span>`; }
-    const rows = [
-      {n:'api-gateway',r:'us-east-1',s:'critical',rpm:'18.4K',p95:'412ms',d:'+42%',dir:'up',ic:icons.api},
-      {n:'payments-svc',r:'us-east-1',s:'degraded',rpm:'4.2K',p95:'288ms',d:'+18%',dir:'up',ic:icons.pay},
-      {n:'postgres-primary',r:'eu-west-1',s:'degraded',rpm:'9.1K',p95:'96ms',d:'+11%',dir:'up',ic:icons.db},
-      {n:'auth-service',r:'us-west-2',s:'healthy',rpm:'12.7K',p95:'64ms',d:'-4%',dir:'down',ic:icons.auth},
-      {n:'event-queue',r:'us-east-1',s:'healthy',rpm:'31.5K',p95:'22ms',d:'-1%',dir:'down',ic:icons.queue},
-      {n:'edge-cdn',r:'global',s:'healthy',rpm:'48.2K',p95:'14ms',d:'-8%',dir:'down',ic:icons.cdn},
-      {n:'search-index',r:'eu-west-1',s:'degraded',rpm:'2.9K',p95:'176ms',d:'+9%',dir:'up',ic:icons.search},
-    ];
-    const sc = {healthy:'st-healthy',degraded:'st-degraded',critical:'st-critical'};
-    const tb = document.getElementById('rows');
-    rows.forEach((r,i)=>{
-      const col = r.dir==='up'?'var(--accent)':'var(--green)';
-      const tr=document.createElement('tr');
-      tr.innerHTML=`<td><span class="checkbox ${i===0?'on':''}"><i class="hgi-stroke hgi-tick-02"></i></span></td>
-        <td><div class="svc"><div class="ico"><i class="hgi-stroke ${r.ic}"></i></div><div class="meta"><div class="nm">${r.n}</div><div class="rg">${r.r}</div></div></div></td>
-        <td><span class="status ${sc[r.s]}"><span class="d"></span>${r.s}</span></td>
-        <td>${spark(i+1,col)}</td>
-        <td class="num">${r.rpm}</td><td class="num">${r.p95}</td><td class="num pct ${r.dir}">${r.d}</td>`;
-      tb.appendChild(tr);
-    });
-    document.addEventListener('click',e=>{ const cb=e.target.closest('.checkbox'); if(cb) cb.classList.toggle('on'); });
-  </script>
+      <!-- Title bar: dots + centered title -->
+      <div class="cur-titlebar">
+        <div class="cur-dots">
+          <div class="cur-dot"></div>
+          <div class="cur-dot"></div>
+          <div class="cur-dot"></div>
+        </div>
+        <span class="cur-title">Scott AI — Plan Mission Control</span>
+        <div class="cur-titlebar-right"></div>
+      </div>
+
+      <!-- 3-col body: 220 | 340 | flex -->
+      <div class="cur-body">
+
+        <!-- LEFT: Context Flow sidebar -->
+        <div class="cur-sidebar">
+          <div class="cur-section-label">Approved</div>
+
+          <div class="cur-item active">
+            <div class="cur-item-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="#EDECEC" stroke-width="1.2"/><path d="M5.5 8l1.8 1.8L11 5.5" stroke="#EDECEC" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="cur-item-content">
+              <div class="cur-item-row">
+                <span class="cur-item-title">APPROVED — ready for execution</span>
+                <span class="cur-item-time">1d</span>
+              </div>
+              <div class="cur-item-sub">Daniel Park</div>
+            </div>
+          </div>
+
+          <div class="cur-section-label" style="margin-top:4px;">Context Flow</div>
+
+          <div class="cur-item">
+            <div class="cur-item-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 7h7M3 10h5" stroke="rgba(237,236,236,0.6)" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="cur-item-content">
+              <div class="cur-item-row">
+                <span class="cur-item-title">RFC: final synthesis + decision log</span>
+                <span class="cur-item-time">2d</span>
+              </div>
+              <div class="cur-item-sub">Scott</div>
+            </div>
+          </div>
+
+          <div class="cur-item">
+            <div class="cur-item-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 7h7M3 10h5" stroke="rgba(237,236,236,0.6)" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="cur-item-content">
+              <div class="cur-item-row">
+                <span class="cur-item-title">Security review: IndexedDB + CRDTs</span>
+                <span class="cur-item-time">3d</span>
+              </div>
+              <div class="cur-item-sub">Elena Vasquez</div>
+            </div>
+          </div>
+
+          <div class="cur-item">
+            <div class="cur-item-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 7h7M3 10h5" stroke="rgba(237,236,236,0.6)" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="cur-item-content">
+              <div class="cur-item-row">
+                <span class="cur-item-title">RFC: unified networking + offline…</span>
+                <span class="cur-item-time">4d</span>
+              </div>
+              <div class="cur-item-row" style="margin-top:2px;">
+                <div class="cur-diff">
+                  <span class="cur-add">+1</span><span class="cur-sep">/</span><span class="cur-del">1</span>
+                  <span class="cur-item-sub" style="margin-left:4px;">Maya Chen</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cur-item">
+            <div class="cur-item-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 7h7M3 10h5" stroke="rgba(237,236,236,0.6)" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="cur-item-content">
+              <div class="cur-item-row">
+                <span class="cur-item-title">PM Branch: offline-first + latency</span>
+                <span class="cur-item-time">5d</span>
+              </div>
+              <div class="cur-item-sub">Priya Patel</div>
+            </div>
+          </div>
+
+          <div class="cur-item">
+            <div class="cur-item-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 7h7M3 10h5" stroke="rgba(237,236,236,0.6)" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="cur-item-content">
+              <div class="cur-item-row">
+                <span class="cur-item-title">RFC: Yjs selected, plan drafted</span>
+                <span class="cur-item-time">6d</span>
+              </div>
+              <div class="cur-item-row" style="margin-top:2px;">
+                <div class="cur-diff">
+                  <span class="cur-add">+1</span><span class="cur-sep">/</span><span class="cur-del">1</span>
+                  <span class="cur-item-sub" style="margin-left:4px;">Maya Chen</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cur-item" style="opacity:0.35;">
+            <div class="cur-item-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 7h7M3 10h5" stroke="rgba(237,236,236,0.6)" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="cur-item-content">
+              <div class="cur-item-row">
+                <span class="cur-item-title">Analysis: Diamond Types (NOT SEL.)</span>
+                <span class="cur-item-time">7d</span>
+              </div>
+              <div class="cur-item-sub">Gemini</div>
+            </div>
+          </div>
+
+          <div class="cur-item">
+            <div class="cur-item-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M3 7h7M3 10h5" stroke="rgba(237,236,236,0.6)" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="cur-item-content">
+              <div class="cur-item-row">
+                <span class="cur-item-title">Analysis: Yjs (SELECTED)</span>
+                <span class="cur-item-time">7d</span>
+              </div>
+              <div class="cur-item-sub">Codex</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CENTER: Comments / chat thread -->
+        <div class="cur-chat">
+          <div class="cur-chat-header">
+            <span class="cur-chat-title">Real-time Collaboration Engine with CRDTs</span>
+          </div>
+
+          <div class="cur-chat-body">
+            <!-- approved pill -->
+            <div class="cur-msg-user" style="background:rgba(31,138,101,0.1);border-color:rgba(31,138,101,0.25);color:#1F8A65;font-size:11px;">
+              ✓ APPROVED by Daniel Park (Engineering Manager)
+            </div>
+
+            <!-- Sam's comment -->
+            <div style="margin-top:10px;">
+              <div class="cur-action-line" style="gap:6px;margin-bottom:3px;">
+                <div style="width:18px;height:18px;border-radius:50%;background:#2B5BF3;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;font-family:'Geist',sans-serif;flex-shrink:0;">S</div>
+                <span style="font-family:'Geist',sans-serif;font-size:11px;font-weight:600;color:#EDECEC;">Sam Okafor</span>
+                <span class="cur-action-dim" style="font-size:10px;">44m ago</span>
+              </div>
+              <div class="cur-msg-user" style="margin-left:24px;">
+                If we're sending document operations over the wire, we need to think about operation validation server-side. A malicious client could inject operations that pass CRDT merge but produce XSS in the rendered output.
+              </div>
+            </div>
+
+            <!-- Alice's comment -->
+            <div style="margin-top:8px;">
+              <div class="cur-action-line" style="gap:6px;margin-bottom:3px;">
+                <div style="width:18px;height:18px;border-radius:50%;background:#7c3aed;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;font-family:'Geist',sans-serif;flex-shrink:0;">A</div>
+                <span style="font-family:'Geist',sans-serif;font-size:11px;font-weight:600;color:#EDECEC;">Alice Chen</span>
+                <span class="cur-action-dim" style="font-size:10px;">31m ago</span>
+              </div>
+              <div class="cur-msg-user" style="margin-left:24px;">
+                Agreed! @claude create a prototype to validate our thinking here
+              </div>
+            </div>
+
+            <!-- file chip — agent wrote a file -->
+            <div style="margin-top:6px;margin-left:24px;">
+              <div class="cur-file-chip">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 2h6l3 3v7a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="rgba(237,236,236,0.6)" stroke-width="1.1"/></svg>
+                <span class="cur-file-chip-name">crdt-validation.ts</span>
+                <span class="cur-file-chip-add">+47</span>
+              </div>
+            </div>
+
+            <!-- Daniel's approval -->
+            <div style="margin-top:8px;">
+              <div class="cur-action-line" style="gap:6px;margin-bottom:3px;">
+                <div style="width:18px;height:18px;border-radius:50%;background:#059669;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;font-family:'Geist',sans-serif;flex-shrink:0;">D</div>
+                <span style="font-family:'Geist',sans-serif;font-size:11px;font-weight:600;color:#EDECEC;">Daniel Park</span>
+                <span class="cur-action-dim" style="font-size:10px;">12m ago</span>
+              </div>
+              <div class="cur-msg-user" style="margin-left:24px;background:rgba(31,138,101,0.08);border-color:rgba(31,138,101,0.2);color:#1F8A65;">
+                APPROVED — ready for execution. Ship it.
+              </div>
+            </div>
+
+            <!-- Elena typing -->
+            <div style="margin-top:8px;opacity:0.4;">
+              <div class="cur-action-line" style="gap:6px;margin-bottom:3px;">
+                <div style="width:18px;height:18px;border-radius:50%;background:#555;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;font-family:'Geist',sans-serif;flex-shrink:0;">E</div>
+                <span style="font-family:'Geist',sans-serif;font-size:11px;font-weight:600;color:#EDECEC;">Elena Vasquez</span>
+                <span class="cur-action-dim" style="font-size:10px;">now</span>
+              </div>
+              <div class="cur-msg-user" style="margin-left:24px;">IndexedDB is no…</div>
+            </div>
+          </div>
+
+          <!-- input bar -->
+          <div class="cur-input-bar">
+            <div class="cur-textarea">Add follow-up…</div>
+            <div class="cur-input-footer">
+              <div class="cur-input-pills">
+                <div class="cur-pill-amber">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v4l2 2" stroke="#C08532" stroke-width="1.2" stroke-linecap="round"/></svg>
+                  Plan
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 5l2 2 2-2" stroke="#C08532" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="cur-pill-dim">
+                  Context Flow
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="opacity:0.6"><path d="M4 5l2 2 2-2" stroke="rgba(237,236,236,0.6)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+              </div>
+              <button class="cur-send-btn">↑</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Code editor — site palette, Scott AI planspace code -->
+        <div class="cur-editor">
+
+          <div class="cur-tabbar">
+            <div class="cur-tab active">
+              y-prosemirror.ts
+              <span class="cur-tab-close">✕</span>
+            </div>
+            <div class="cur-tab">
+              crdt-validate.ts
+              <span class="cur-tab-close">✕</span>
+            </div>
+          </div>
+
+          <div class="cur-editor-toolbar">
+            <div class="cur-breadcrumb">
+              <span>src</span>
+              <span style="opacity:0.3;margin:0 3px;">/</span>
+              <span>lib</span>
+              <span style="opacity:0.3;margin:0 3px;">/</span>
+              <span>collaboration</span>
+              <span style="opacity:0.3;margin:0 3px;">/</span>
+              <span class="cur-breadcrumb-active">y-prosemirror.ts</span>
+            </div>
+            <div class="cur-toolbar-right">
+              <button class="cur-toolbar-btn" style="color:#1F8A65;">+47</button>
+              <button class="cur-toolbar-btn" style="color:#CF2D56;">-3</button>
+              <button class="cur-btn-build">Run</button>
+            </div>
+          </div>
+
+          <div class="cur-editor-content" style="padding:0;display:flex;flex-direction:row;overflow:auto;">
+
+            <!-- line numbers gutter -->
+            <div style="
+              flex-shrink:0;
+              display:flex;
+              flex-direction:column;
+              padding:16px 12px 16px 8px;
+              text-align:right;
+              font-family:'Geist Mono',monospace;
+              font-size:12.5px;
+              line-height:22px;
+              color:#333;
+              background:#000;
+              border-right:1px solid #1a1a1a;
+              user-select:none;
+            ">
+              <span>1</span>
+              <span>2</span>
+              <span>3</span>
+              <span>4</span>
+              <span>5</span>
+              <span>6</span>
+              <span>7</span>
+              <span>8</span>
+              <span>9</span>
+              <span>10</span>
+              <span>11</span>
+              <span>12</span>
+              <span>13</span>
+              <span>14</span>
+              <span>15</span>
+              <span>16</span>
+              <span>17</span>
+              <span>18</span>
+              <span>19</span>
+              <span>20</span>
+              <span>21</span>
+            </div>
+
+            <!-- code -->
+            <pre style="
+              margin:0;
+              padding:16px 20px;
+              font-family:'Geist Mono',monospace;
+              font-size:12.5px;
+              line-height:22px;
+              background:#000;
+              color:#fff;
+              flex:1;
+              overflow:visible;
+              white-space:pre;
+            "><span style="color:#2B5BF3;">import</span> * as Y <span style="color:#2B5BF3;">from</span> <span style="color:#6ee7b7;">'yjs'</span>;
+<span style="color:#2B5BF3;">import</span> { ySyncPlugin, yCursorPlugin, yUndoPlugin } <span style="color:#2B5BF3;">from</span> <span style="color:#6ee7b7;">'y-prosemirror'</span>;
+<span style="color:#2B5BF3;">import</span> { WebsocketProvider } <span style="color:#2B5BF3;">from</span> <span style="color:#6ee7b7;">'y-websocket'</span>;
+
+<span style="color:#2B5BF3;">const</span> <span style="color:#a78bfa;">ydoc</span> = <span style="color:#2B5BF3;">new</span> <span style="color:#60a5fa;">Y.Doc</span>();
+<span style="color:#2B5BF3;">const</span> <span style="color:#a78bfa;">provider</span> = <span style="color:#2B5BF3;">new</span> <span style="color:#60a5fa;">WebsocketProvider</span>(
+  <span style="color:#6ee7b7;">'wss://collab.example.com'</span>, docId, ydoc
+);
+<span style="color:#2B5BF3;">const</span> <span style="color:#a78bfa;">yXmlFragment</span> = ydoc.<span style="color:#60a5fa;">getXmlFragment</span>(<span style="color:#6ee7b7;">'prosemirror'</span>);
+
+<span style="color:#525252;">// Drop-in plugins — zero custom binding code</span>
+<span style="color:#2B5BF3;">const</span> <span style="color:#a78bfa;">collabPlugins</span> = [
+<span style="background:rgba(43,91,243,0.08);display:block;margin:0 -20px;padding:0 20px;border-left:2px solid #2B5BF3;">  <span style="color:#60a5fa;">ySyncPlugin</span>(yXmlFragment),        <span style="color:#525252;">// CRDT ↔ PM sync</span></span>
+  <span style="color:#60a5fa;">yCursorPlugin</span>(provider.awareness), <span style="color:#525252;">// remote cursors</span>
+  <span style="color:#60a5fa;">yUndoPlugin</span>(),                    <span style="color:#525252;">// CRDT-aware undo</span>
+];
+
+<span style="color:#2B5BF3;">const</span> <span style="color:#a78bfa;">state</span> = EditorState.<span style="color:#60a5fa;">create</span>({
+  doc: schema.<span style="color:#60a5fa;">nodeFromJSON</span>(doc),
+  plugins: [...existingPlugins, ...<span style="color:#a78bfa;">collabPlugins</span>],
+});</pre>
+
+          </div>
+
+        </div>
+
+      </div><!-- /cur-body -->
+    </div><!-- /hero-dashboard -->
+  </div><!-- /hero-dashboard-wrap -->
+
+</section>
+
+<!-- Logo Strip -->
+<div style="border-top:1px solid var(--border);">
+  <div class="logo-strip">
+    <span class="strip-label">Works perfectly with</span>
+    <div class="strip-divider"></div>
+    <div class="strip-logos">
+      <span class="strip-logo">Cursor</span>
+      <span class="strip-logo">Claude Code</span>
+      <span class="strip-logo">Copilot</span>
+      <span class="strip-logo">Codex</span>
+      <span class="strip-logo">Cline</span>
+      <span class="strip-logo">Windsurf</span>
+      <span class="strip-logo">Kiro</span>
+      <span class="strip-logo">Trae</span>
+      <span class="strip-logo">Aider</span>
+      <span class="strip-logo">Devin</span>
+    </div>
+  </div>
+</div>
+
+<!-- Problem Section -->
+<div class="problem-section">
+  <div class="problem-inner">
+    <div class="problem-heading">
+      <h2>Coding agent misalignment is sneaky expensive.</h2>
+      <p>Agents are delivering real value. But without agent-native team alignment, significant gains are left on the table.</p>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-tag">New Productivity Bottleneck</div>
+        <h3>Senior engineers burn review time</h3>
+        <p>Senior engineers spend significantly more time reviewing misaligned agent output instead of shipping.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-tag">Non-Finite Risks</div>
+        <h3>Agents run on assumptions</h3>
+        <p>Agents that execute on assumptions instead of approved intent introduce risk that's invisible until deployment.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-tag">Their Beats</div>
+        <h3>Misaligned agents compound costs</h3>
+        <p>Every misaligned agent run burns tokens on the wrong ideas, fetches, and rework costs — compounding fast.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Alignment Section -->
+<div class="align-section">
+  <div class="align-inner">
+    <div class="align-heading">
+      <h2>Alignment is the force multiplier for coding agents.</h2>
+    </div>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-chip">01 · Senior Engineers</div>
+        <h3>Senior engineers ship, not babysit</h3>
+        <p>Approve the plan once, not every pull request. Seniors get back to shipping instead of reviewing misaligned agent output.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-chip">02 · Fewer Incidents</div>
+        <h3>Fewer incidents, faster delivery</h3>
+        <p>Agents execute on approved intent, not assumptions. More stable deployments, fewer surprises in review.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-chip">03 · Less Rework</div>
+        <h3>Less rework, more throughput</h3>
+        <p>Aligned agents don't churn through retries. Full context up front means less compute wasted on wrong directions.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- How It Works -->
+<div class="how-section">
+  <div class="how-inner">
+    <div class="how-header">
+      <h2>How Scott Enables Alignment</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-label">
+          <span class="step-num">01</span>
+          <span class="step-title">Plan</span>
+        </div>
+        <div class="step-body">
+          <p>Take your half-baked idea to a comprehensive proposal in a planspace that is grounded in all of your company's codebases & knowledge sources. Every plan has full reasoning context ready to hand off.</p>
+          <a href="#" class="step-link">Start Planning →</a>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-label">
+          <span class="step-num">02</span>
+          <span class="step-title">Align</span>
+        </div>
+        <div class="step-body">
+          <p>Get your team's feedback through inline comments, prototype sharing, and streamlined reviews colocated with your full chain of reasoning. All the context needed to delegate a comprehensive plan to any coding agent.</p>
+          <a href="#" class="step-link">See Alignment Features →</a>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-label">
+          <span class="step-num">03</span>
+          <span class="step-title">Delegate</span>
+        </div>
+        <div class="step-body">
+          <p>Hand the approved plan to any coding agent with full context. Less rework, less token waste, fewer surprises in review. Your agent executes on what you actually meant to build.</p>
+          <a href="#" class="step-link">Try Integration Tools →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Live Agent Demo Panel -->
+<div class="demo-section">
+  <div class="demo-inner">
+    <div class="demo-header">
+      <h2>Safe For Agent To Operate</h2>
+      <p>Instant preview branches. Change and test in isolation with any branch before it reaches production.</p>
+    </div>
+    <div class="agent-panel">
+      <div class="agent-toolbar">
+        <div class="agent-toolbar-left">
+          <span class="agent-label">scott-ai / planspace</span>
+          <span class="agent-label" style="color: var(--text-dim)">main ← feature/auth-v2</span>
+        </div>
+        <div class="agent-status">
+          <div class="status-dot"></div>
+          All agents aligned
+        </div>
+      </div>
+      <div class="agent-body">
+        <div class="agent-left">
+          <div class="agent-section-label">Active Agent Sessions</div>
+          <div class="commit-list">
+            <div class="commit-item">
+              <div class="commit-icon" style="background:#D97757;">C</div>
+              <div class="commit-text">
+                <div class="commit-title">Claude updated auth module</div>
+                <div class="commit-sub">feature/auth-v2 · 09:45</div>
+              </div>
+              <span class="commit-badge badge-pass">Test Passed</span>
+            </div>
+            <div class="commit-item">
+              <div class="commit-icon" style="background:linear-gradient(180deg,#B1A7FF,#3941FF);">O</div>
+              <div class="commit-text">
+                <div class="commit-title">Codex changed database schema</div>
+                <div class="commit-sub">feature/db-v2 · 11:45</div>
+              </div>
+              <span class="commit-badge badge-review">In Review</span>
+            </div>
+            <div class="commit-item">
+              <div class="commit-icon" style="background:#3186FF;">G</div>
+              <div class="commit-text">
+                <div class="commit-title">Antigravity updated realtime</div>
+                <div class="commit-sub">feature/rt-v2 · 16:45</div>
+              </div>
+              <span class="commit-badge badge-waiting">Waiting</span>
+            </div>
+          </div>
+        </div>
+        <div class="agent-right">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+              <div class="agent-section-label">Without Scott</div>
+              <div class="misalignment-list">
+                <div class="misalign-item">
+                  <div class="misalign-dot"></div>
+                  <span class="misalign-text">Agent ran 47 retries on wrong assumption</span>
+                </div>
+                <div class="misalign-item">
+                  <div class="misalign-dot"></div>
+                  <span class="misalign-text">Test failed — intent not captured</span>
+                </div>
+                <div class="misalign-item">
+                  <div class="misalign-dot"></div>
+                  <span class="misalign-text">Branch closed before review</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="agent-section-label">With Scott</div>
+              <div class="commit-list">
+                <div class="align-item">
+                  <div class="align-dot"></div>
+                  <span class="misalign-text">Plan reviewed & approved pre-execution</span>
+                </div>
+                <div class="align-item">
+                  <div class="align-dot"></div>
+                  <span class="misalign-text">Full context handed to agent</span>
+                </div>
+                <div class="align-item">
+                  <div class="align-dot"></div>
+                  <span class="misalign-text">Pushed to prod — test passed ✓</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <div class="faq-inner">
+    <div class="faq-aside">
+      <h2>Frequently Asked Questions</h2>
+      <p>Questions? We've got answers.</p>
+      <a href="#">or check out our Documentation →</a>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item open">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <span class="faq-q-text">What is Scott AI?</span>
+          <div class="faq-toggle"></div>
+        </div>
+        <div class="faq-a">Scott AI is an agent-native alignment platform. It gives development teams the tools to plan, align, and delegate to AI coding agents — so agents execute on what you actually meant to build. Every planspace has full reasoning context ready to hand off to any coding agent through CLI or integrations.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <span class="faq-q-text">What coding agents does Scott work with?</span>
+          <div class="faq-toggle"></div>
+        </div>
+        <div class="faq-a">Scott AI works with all major coding agents including Cursor, Claude Code, GitHub Copilot, OpenAI Codex, Cline, Windsurf, Kiro, and more. Any agent that can consume context from a CLI or API integration can use Scott planspaces.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <span class="faq-q-text">How is this different from Google Docs or Notion?</span>
+          <div class="faq-toggle"></div>
+        </div>
+        <div class="faq-a">Google Docs and Notion are built for human-to-human collaboration. Scott is built for human-to-agent handoff. Planspaces are grounded in your actual codebase and knowledge sources, structured for agent consumption, and designed to minimize token waste during execution.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <span class="faq-q-text">Do I need to change my development workflow?</span>
+          <div class="faq-toggle"></div>
+        </div>
+        <div class="faq-a">No. Scott plugs into your existing workflow. You keep using the coding agents and tools you already use — Scott adds the alignment layer before execution. Think of it as a pre-flight checklist that runs before your agent takes over.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-grid"></div>
+  <div class="cta-inner">
+    <h2>Stop Reviewing <span>Misaligned</span> Code</h2>
+    <p class="cta-sub">Align on intent first. Create your first planspace in minutes.</p>
+    <div class="cta-form">
+      <input class="cta-input" type="email" placeholder="your@email.com">
+      <button class="btn-cta">Join Waitlist</button>
+      <button class="btn-lg btn-lg-outline" style="font-size:16px;padding:12px 24px;">Book A Demo →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-label">PLANSPACES CREATED</div>
+    <div class="stat-value">12,840</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">TOKEN SAVINGS</div>
+    <div class="stat-value">4.2M</div>
+    <div class="stat-sub">tokens saved</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">AGENT SESSIONS</div>
+    <div class="stat-value">89,302</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">ALIGNMENT RATE</div>
+    <div class="stat-value">94%</div>
+    <div class="stat-sub">first-run success</div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="nav-logo-dot"></div>
+          <span class="footer-name">Scott AI</span>
+        </div>
+        <div class="footer-divider"></div>
+        <div class="footer-socials">
+          <svg class="footer-social" viewBox="0 0 20 20" fill="currentColor"><path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"/></svg>
+          <svg class="footer-social" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd"/></svg>
+          <svg class="footer-social" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2H3v16h5v4l4-4h5l4-4V2zM11 11V7M16 11V7"/></svg>
+        </div>
+      </div>
+      <ul class="footer-nav">
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Docs</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms & Conditions</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-status">
+        <div class="status-green"></div>
+        <span>All systems operational</span>
+      </div>
+      <span class="footer-copy">© 2026 Scott AI, Inc. All rights reserved.</span>
+    </div>
+  </div>
+</footer>
+
 </body>
 </html>
