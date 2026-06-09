@@ -3,1251 +3,177 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sentry</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css" />
+<title>Solaris — Pre-Sale</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap');
 :root{
-  --bg:#F8F5F5;--panel:#fff;--ink:#121212;--muted:#8F8F8F;--muted2:#B5B5B5;
-  --line:#E9E9E9;--line2:#DCDCDC;--hover:rgba(236,236,236,.5);
-  --accent:#FF3C00;--ab:#FF5A1F;--green:#00CA47;--blue:#00A5E0;
-  --slate:#384357;--amber:#782100;--bar:#D9D9D9;--baredge:#CECECE;
-  --mono:'Geist Mono',monospace;
+  --green:#00AE6C;--ink:#000000;--txt:#FFFFFF;--txt-d:rgba(255,255,255,.7);--txt-d2:rgba(255,255,255,.5);
+  --glass:rgba(20,28,26,.42);--glass-line:rgba(255,255,255,.14);--field:rgba(255,255,255,.06);
+  --display:"Geist",-apple-system,sans-serif;--mono:"Geist Mono",monospace;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;overflow:hidden;}
-body{font-family:'Geist',sans-serif;font-weight:500;color:var(--ink);-webkit-font-smoothing:antialiased;background:var(--bg);}
-::-webkit-scrollbar{width:6px;height:6px;}
-::-webkit-scrollbar-thumb{background:#e0dada;border-radius:4px;}
-.hgi-stroke{font-style:normal;line-height:1;display:inline-flex;}
-
-/* ── LAYOUT ── */
-.app{display:grid;grid-template-columns:220px 1fr;height:100vh;background:var(--panel);}
-
-/* ── SIDEBAR ── */
-.side{display:flex;flex-direction:column;border-right:1px solid var(--line);padding:20px 0;overflow-y:auto;}
-.brand{padding:0 20px 20px;border-bottom:1px solid var(--line);margin-bottom:8px;}
-.brand img{height:22px;width:auto;display:block;}
-.nav{padding:0 12px;}
-.nav-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;font-size:14px;color:var(--ink);cursor:pointer;transition:background .13s;position:relative;}
-.nav-item i{font-size:16px;width:20px;color:var(--ink);}
-.nav-item:hover{background:var(--hover);}
-.nav-item.active{background:var(--hover);font-weight:600;}
-.nav-item.active::before{content:'';position:absolute;left:-12px;top:8px;bottom:8px;width:3px;background:var(--accent);border-radius:0 3px 3px 0;}
-.nav-item .badge{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:500;background:#E5E5E5;color:var(--ink);padding:2px 8px;border-radius:8px;}
-.nav-div{height:1px;background:var(--line);margin:8px 12px;}
-.side-foot{margin-top:auto;padding:16px 12px 0;border-top:1px solid var(--line);}
-.user{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;cursor:pointer;}
-.user:hover{background:var(--hover);}
-.user .av{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#00BAFF,#0081C0);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;}
-.user-info .nm{font-size:12px;font-weight:600;}
-.user-info .rl{font-size:11px;color:var(--muted);}
-
-/* ── MAIN ── */
-.main{display:flex;flex-direction:column;overflow:hidden;}
-.topbar{display:flex;align-items:center;padding:16px 28px;border-bottom:1px solid var(--line);gap:16px;flex-shrink:0;}
-.topbar h1{font-size:18px;font-weight:600;letter-spacing:-0.5px;}
-.topbar .crumb{font-size:11px;color:var(--muted);margin-top:2px;}
-.topbar-r{margin-left:auto;display:flex;align-items:center;gap:10px;}
-.ico-btn{width:32px;height:32px;border:1px solid var(--line2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;transition:border-color .13s;}
-.ico-btn:hover{border-color:var(--muted);}
-.ico-btn i{font-size:16px;}
-.btn-pri{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;background:var(--accent);color:#fff;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:none;}
-.btn-pri i{font-size:14px;}
-.scroll{overflow-y:auto;flex:1;}
-.view{display:none;}.view.active{display:block;}
-
-/* ── SHARED ── */
-.kpis{display:grid;border-bottom:1px solid var(--line);}
-.kpi{padding:16px 20px;border-right:1px solid var(--line);}
-.kpi:last-child{border-right:none;}
-.kpi .lbl{font-size:10px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--muted);}
-.kpi .val{font-family:var(--mono);font-size:24px;font-weight:600;letter-spacing:-0.5px;margin-top:4px;}
-.kpi .val small{font-size:13px;color:var(--muted);}
-.kpi .sub{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10px;margin-top:4px;}
-.kpi .sub i{font-size:11px;}
-.kpi .sub .dim{color:var(--muted2);}
-.pos{color:var(--accent);}.neg{color:var(--green);}
-.section{padding:24px 28px;}
-.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.sec-head h2{font-size:13px;font-weight:600;}
-.sec-head .sec-r{display:flex;align-items:center;gap:8px;}
-.pill{display:flex;align-items:center;gap:8px;height:32px;padding:0 14px;border:1px solid var(--line2);border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;}
-.pill:hover{border-color:var(--muted);}
-.pill i{font-size:13px;color:var(--muted);}
-.pill.on{background:var(--ink);color:#fff;border-color:var(--ink);}
-.pill.on i{color:#fff;}
-.stepper{display:flex;align-items:center;border:1px solid var(--line2);border-radius:8px;height:32px;overflow:hidden;}
-.stepper .ar{width:30px;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;font-size:14px;}
-.stepper .ar:hover{background:var(--hover);}
-.stepper .lb{padding:0 12px;font-size:12px;font-weight:500;}
-table{width:100%;border-collapse:collapse;}
-thead th{text-align:left;font-size:10px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--muted);padding:12px 28px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
-thead th.r{text-align:right;}
-tbody td{padding:12px 28px;border-bottom:1px solid var(--line);vertical-align:middle;font-size:12px;}
-tbody tr.row-click{cursor:pointer;transition:background .12s;}
-tbody tr.row-click:hover{background:#FBFAFA;}
-.svc{display:flex;align-items:center;gap:10px;}
-.svc .ic{width:28px;height:28px;border-radius:8px;background:var(--line);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;flex-shrink:0;}
-.svc .nm{font-size:12px;font-weight:600;}
-.svc .rg{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px;}
-.num{text-align:right;font-family:var(--mono);font-size:12px;}
-.mono{font-family:var(--mono);}
-.st{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;font-weight:500;padding:4px 10px;border-radius:16px;}
-.st .d{width:6px;height:6px;border-radius:2px;}
-.st-ok{color:var(--green);background:rgba(0,202,71,.08);}.st-ok .d{background:var(--green);}
-.st-warn{color:#B8860B;background:rgba(224,165,49,.1);}.st-warn .d{background:#E0A531;}
-.st-crit{color:var(--ab);background:rgba(255,69,0,.08);}.st-crit .d{background:var(--ab);}
-.st-info{color:var(--blue);background:rgba(0,186,255,.08);}.st-info .d{background:var(--blue);}
-.st-degr{color:var(--slate);background:rgba(56,67,87,.1);}.st-degr .d{background:var(--slate);}
-.lvl{font-family:var(--mono);font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;}
-.lvl-err{color:var(--accent);background:rgba(255,60,0,.08);}
-.lvl-warn{color:#B8860B;background:rgba(224,165,49,.12);}
-.lvl-info{color:var(--blue);background:rgba(0,186,255,.08);}
-.lvl-debug{color:var(--muted);background:var(--line);}
-.trend{display:inline-flex;align-items:flex-end;gap:2px;height:20px;}
-.trend i{width:3px;border-radius:2px;display:inline-block;}
-
-/* ── MINI CHART ── */
-.mini-chart{height:56px;display:flex;align-items:flex-end;gap:3px;}
-.mc-bar{flex:1;border-radius:3px 3px 0 0;}
-
-/* ── CHART CARDS GRID ── */
-.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 28px 24px;}
-.chart-card{border:1px solid var(--line);border-radius:12px;padding:20px;}
-.chart-card .cc-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;}
-.chart-card .cc-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;}
-.chart-card .cc-val{font-family:var(--mono);font-size:20px;font-weight:600;letter-spacing:-0.5px;}
-.chart-card .cc-sub{font-family:var(--mono);font-size:10px;margin-top:2px;}
-.bars-wrap{display:flex;align-items:flex-end;gap:4px;height:80px;}
-.bars-wrap .bar{flex:1;border-radius:3px 3px 0 0;background:var(--bar);border:1px solid var(--baredge);}
-.bars-wrap .bar.hi{background:var(--accent);border-color:var(--accent);}
-.bars-wrap .bar.mid{background:var(--amber);border-color:var(--amber);}
-.line-wrap{height:80px;position:relative;overflow:hidden;}
-.line-wrap svg{width:100%;height:100%;}
-
-/* ── EVAL SPECIFIC ── */
-.eval-score{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:13px;font-weight:600;}
-.score-bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;flex:1;}
-.score-fill{height:100%;border-radius:3px;}
-.eval-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:0 28px 24px;}
-.eval-card{border:1px solid var(--line);border-radius:12px;padding:20px;}
-.eval-card .ec-label{font-size:10px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
-.eval-card .ec-score{font-family:var(--mono);font-size:28px;font-weight:600;letter-spacing:-0.5px;}
-.eval-card .ec-delta{font-family:var(--mono);font-size:11px;margin-top:4px;}
-.eval-card .ec-bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:12px;}
-.eval-card .ec-fill{height:100%;border-radius:3px;}
-
-/* ── TRACE WATERFALL ── */
-.trace-legend{display:flex;align-items:center;gap:20px;padding:16px 28px;}
-.tl-item{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:500;color:var(--muted);}
-.tl-dot{width:10px;height:10px;border-radius:3px;}
-.trace-row{display:flex;align-items:center;gap:12px;padding:10px 28px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s;}
-.trace-row:hover{background:#FBFAFA;}
-.trace-id{font-family:var(--mono);font-size:11px;color:var(--blue);width:88px;flex-shrink:0;}
-.trace-name{font-size:12px;font-weight:500;width:180px;flex-shrink:0;}
-.trace-name span{font-family:var(--mono);font-size:10px;color:var(--muted);display:block;margin-top:2px;}
-.wf{flex:1;height:24px;position:relative;background:linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:12.5% 100%;}
-.wf .seg{position:absolute;top:5px;height:14px;border-radius:4px;cursor:pointer;}
-.wf .seg:hover{filter:brightness(1.08);}
-.seg-tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:6px;padding:4px 8px;font-family:var(--mono);font-size:10px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .12s;z-index:20;}
-.wf .seg:hover .seg-tip{opacity:1;}
-.trace-dur{font-family:var(--mono);font-size:11px;width:60px;text-align:right;flex-shrink:0;}
-.trace-tokens{font-family:var(--mono);font-size:11px;width:56px;text-align:right;flex-shrink:0;color:var(--muted);}
-
-/* ── INCIDENTS ── */
-.inc-card{margin:0 28px 12px;border:1px solid var(--line);border-radius:12px;padding:18px;cursor:pointer;transition:border-color .13s;}
-.inc-card:hover{border-color:var(--line2);}
-.inc-head{display:flex;align-items:center;gap:12px;}
-.inc-head .sev{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.inc-head .sev.crit{background:var(--accent);}
-.inc-head .sev.warn{background:#E0A531;}
-.inc-head .sev.info{background:var(--blue);}
-.inc-head .title{font-size:13px;font-weight:600;flex:1;}
-.inc-head .time{font-family:var(--mono);font-size:11px;color:var(--muted);}
-.inc-meta{display:flex;align-items:center;gap:16px;margin-top:10px;}
-.inc-meta span{font-family:var(--mono);font-size:10px;color:var(--muted);}
-.inc-meta .im-key{color:var(--muted2);}
-
-/* ── COST ── */
-.cost-cards{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line);}
-.cost-card{padding:16px 20px;border-right:1px solid var(--line);}
-.cost-card:last-child{border-right:none;}
-.cost-card .lbl{font-size:10px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--muted);}
-.cost-card .val{font-family:var(--mono);font-size:24px;font-weight:600;letter-spacing:-0.5px;margin-top:4px;}
-.cost-card .sub{font-family:var(--mono);font-size:10px;margin-top:4px;}
-.spend-row{display:flex;align-items:center;gap:12px;padding:12px 28px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s;}
-.spend-row:hover{background:#FBFAFA;}
-.spend-row .sn{font-size:12px;font-weight:500;width:160px;flex-shrink:0;}
-.spend-row .sbar{flex:1;height:8px;background:var(--line);border-radius:4px;overflow:hidden;}
-.spend-row .sbar-fill{height:100%;border-radius:4px;background:var(--accent);}
-.spend-row .sv{font-family:var(--mono);font-size:12px;font-weight:600;width:60px;text-align:right;}
-.spend-row .sp{font-family:var(--mono);font-size:11px;color:var(--muted);width:36px;text-align:right;}
-
-/* ── DEPLOYMENTS ── */
-.dep-timeline{padding:24px 28px;}
-.dep-item{display:flex;gap:20px;padding-bottom:24px;position:relative;}
-.dep-item::before{content:'';position:absolute;left:11px;top:24px;bottom:0;width:1px;background:var(--line2);}
-.dep-item:last-child::before{display:none;}
-.dep-dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--line2);background:var(--panel);display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1;}
-.dep-dot.latest{border-color:var(--accent);background:var(--accent);}
-.dep-dot.latest i{color:#fff;}
-.dep-dot i{font-size:12px;color:var(--muted);}
-.dep-body{flex:1;padding-top:2px;}
-.dep-head{display:flex;align-items:center;gap:10px;}
-.dep-ver{font-size:14px;font-weight:600;letter-spacing:-0.5px;}
-.dep-time{font-family:var(--mono);font-size:11px;color:var(--muted);}
-.dep-desc{font-size:12px;color:var(--muted);margin-top:4px;}
-.dep-stats{display:flex;gap:16px;margin-top:10px;}
-.dep-stat{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;}
-.dep-stat i{font-size:13px;}
-
-/* ── ALERTS ── */
-.alert-rule{display:flex;align-items:center;gap:12px;padding:14px 28px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s;}
-.alert-rule:hover{background:#FBFAFA;}
-.alert-rule .ar-ic{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
-.alert-rule .ar-body{flex:1;}
-.alert-rule .ar-name{font-size:12px;font-weight:600;}
-.alert-rule .ar-cond{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px;}
-.alert-rule .ar-chan{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--muted);}
-.alert-rule .ar-chan i{font-size:12px;}
-
-/* ── SETTINGS ── */
-.set-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:24px 28px;}
-.set-sec{border:1px solid var(--line);border-radius:12px;overflow:hidden;}
-.set-sec h3{font-size:13px;font-weight:600;padding:16px 20px;border-bottom:1px solid var(--line);}
-.set-row{display:flex;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);}
-.set-row:last-child{border-bottom:none;}
-.set-row .info .t{font-size:12px;font-weight:500;}
-.set-row .info .d{font-size:11px;color:var(--muted);margin-top:4px;}
-.set-row .ctl{margin-left:auto;}
-.toggle{width:40px;height:24px;border-radius:12px;background:var(--line2);position:relative;cursor:pointer;transition:background .15s;}
-.toggle.on{background:var(--accent);}
-.toggle::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .15s;}
-.toggle.on::after{transform:translateX(16px);}
-.set-input{height:34px;border:1px solid var(--line2);border-radius:8px;padding:0 12px;font-family:inherit;font-size:12px;width:180px;color:var(--ink);}
-.model-tag{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;background:var(--line);border-radius:8px;font-size:12px;font-weight:500;}
-
-/* ── DRAWER ── */
-.drawer-scrim{position:fixed;inset:0;background:rgba(20,18,18,.28);opacity:0;pointer-events:none;transition:opacity .2s;z-index:40;}
-.drawer-scrim.open{opacity:1;pointer-events:auto;}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:520px;max-width:92vw;background:var(--panel);border-left:1px solid var(--line);box-shadow:-8px 0 32px rgba(0,0,0,.08);transform:translateX(100%);transition:transform .24s cubic-bezier(.4,0,.2,1);z-index:50;display:flex;flex-direction:column;}
-.drawer.open{transform:translateX(0);}
-.drawer-head{display:flex;align-items:center;gap:12px;padding:20px 24px;border-bottom:1px solid var(--line);flex-shrink:0;}
-.drawer-title{flex:1;min-width:0;}
-.drawer-title .a{font-size:16px;font-weight:600;letter-spacing:-0.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.drawer-title .b{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;}
-.drawer-body{overflow-y:auto;flex:1;padding:24px;}
-.d-tabs{display:flex;gap:4px;padding:0 24px;border-bottom:1px solid var(--line);flex-shrink:0;}
-.d-tab{font-size:13px;font-weight:500;color:var(--muted);padding:12px 14px;cursor:pointer;position:relative;border-bottom:2px solid transparent;margin-bottom:-1px;}
-.d-tab.active{color:var(--ink);border-bottom-color:var(--accent);}
-.d-tab-body{display:none;padding:24px;overflow-y:auto;flex:1;}
-.d-tab-body.active{display:block;}
-.d-sec{margin-bottom:24px;}
-.d-sec h4{font-size:10px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
-.d-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.d-stat .l{font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);}
-.d-stat .v{font-family:var(--mono);font-size:18px;font-weight:600;margin-top:4px;letter-spacing:-0.5px;}
-.d-stat .v.sm{font-size:13px;}
-.d-kv{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:12px;}
-.d-kv:last-child{border-bottom:none;}
-.d-kv .k{color:var(--muted);}
-.d-kv .v{font-family:var(--mono);font-weight:500;}
-.d-actions{display:flex;gap:8px;margin-top:4px;}
-.d-btn{flex:1;height:38px;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--line2);background:var(--panel);transition:background .13s;}
-.d-btn:hover{background:var(--hover);}
-.d-btn i{font-size:14px;}
-.d-btn.pri{background:var(--accent);color:#fff;border-color:var(--accent);}
-.d-btn.pri:hover{opacity:.9;}
-.logbox{background:#FBF9F9;border:1px solid var(--line);border-radius:8px;padding:14px;font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--ink);white-space:pre-wrap;word-break:break-word;}
-.tl-timeline{position:relative;padding-left:22px;}
-.tl-timeline::before{content:'';position:absolute;left:5px;top:4px;bottom:4px;width:1px;background:var(--line2);}
-.tl-step{position:relative;padding-bottom:18px;}
-.tl-step:last-child{padding-bottom:0;}
-.tl-step::before{content:'';position:absolute;left:-22px;top:3px;width:11px;height:11px;border-radius:50%;background:var(--panel);border:2px solid var(--muted2);}
-.tl-step.hot::before{border-color:var(--accent);background:var(--accent);}
-.tl-step .ts-t{font-size:12px;font-weight:500;}
-.tl-step .ts-m{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px;}
-.span-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);}
-.span-row:last-child{border-bottom:none;}
-.span-row .sdot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
-.span-row .snm{font-size:12px;font-weight:500;flex:1;}
-.span-row .sbar{width:120px;height:6px;background:var(--line);border-radius:3px;overflow:hidden;}
-.span-row .sbar>div{height:100%;border-radius:3px;}
-.span-row .sms{font-family:var(--mono);font-size:11px;color:var(--muted);width:56px;text-align:right;}
-.gauge{margin-bottom:12px;}
-.gauge:last-child{margin-bottom:0;}
-.gtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-.gname{font-size:11px;font-weight:500;}
-.gval{font-family:var(--mono);font-size:11px;color:var(--muted);}
-.track{height:6px;background:var(--line);border-radius:3px;overflow:hidden;}
-.fill{height:100%;border-radius:3px;}
-
-/* ── MODAL ── */
-.modal-scrim{position:fixed;inset:0;background:rgba(20,18,18,.32);opacity:0;pointer-events:none;transition:opacity .18s;z-index:60;display:flex;align-items:center;justify-content:center;}
-.modal-scrim.open{opacity:1;pointer-events:auto;}
-.modal{background:var(--panel);border-radius:14px;width:440px;max-width:92vw;box-shadow:0 16px 48px rgba(0,0,0,.18);transform:scale(.96);transition:transform .18s;max-height:88vh;display:flex;flex-direction:column;}
-.modal-scrim.open .modal{transform:scale(1);}
-.modal-head{display:flex;align-items:center;gap:12px;padding:20px 22px;border-bottom:1px solid var(--line);}
-.modal-head .mh-ic{width:32px;height:32px;border-radius:8px;background:rgba(255,60,0,.08);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:16px;}
-.modal-head h3{font-size:15px;font-weight:600;letter-spacing:-0.5px;flex:1;}
-.modal-body{padding:22px;overflow-y:auto;}
-.modal-foot{display:flex;gap:8px;padding:16px 22px;border-top:1px solid var(--line);}
-.field{margin-bottom:16px;}
-.field:last-child{margin-bottom:0;}
-.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:6px;letter-spacing:0.3px;}
-.field input,.field select{width:100%;height:38px;border:1px solid var(--line2);border-radius:8px;padding:0 12px;font-family:inherit;font-size:13px;color:var(--ink);background:var(--panel);}
-.field input:focus,.field select:focus{outline:none;border-color:var(--accent);}
-.field textarea{width:100%;border:1px solid var(--line2);border-radius:8px;padding:10px 12px;font-family:inherit;font-size:13px;color:var(--ink);resize:vertical;min-height:72px;}
-.field textarea:focus{outline:none;border-color:var(--accent);}
-
-/* ── TOAST ── */
-.toast-wrap{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:8px;z-index:80;}
-.toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;padding:12px 16px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,.2);transform:translateY(8px);opacity:0;transition:all .2s;min-width:240px;}
-.toast.show{transform:translateY(0);opacity:1;}
-.toast i{font-size:16px;color:var(--green);}
-.toast.err i{color:var(--ab);}
-
-/* ── DROPDOWN MENU ── */
-.menu-pop{position:fixed;background:var(--panel);border:1px solid var(--line2);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:6px;z-index:70;min-width:160px;display:none;}
-.menu-pop.open{display:block;}
-.menu-pop .mi{padding:8px 12px;border-radius:6px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;}
-.menu-pop .mi:hover{background:var(--hover);}
-.menu-pop .mi.sel{font-weight:600;}
-.menu-pop .mi.sel::after{content:'✓';margin-left:auto;color:var(--accent);}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:var(--display);min-height:100vh;color:var(--txt);position:relative;overflow-x:hidden;background:#0c100e;display:flex;align-items:center;justify-content:center;padding:32px 20px}
+.bg{position:fixed;inset:0;z-index:-2;background:#0c100e;background-image:radial-gradient(900px 600px at 20% -10%,rgba(0,174,108,.10),transparent 55%),radial-gradient(800px 600px at 100% 110%,rgba(11,41,42,.5),transparent 55%)}
+.bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,12,11,.2),rgba(8,12,11,.4))}
+.wrap{width:100%;max-width:1080px;display:grid;grid-template-columns:1fr 460px;gap:22px;align-items:start}
+.glass{background:var(--glass);backdrop-filter:blur(26px);border:1px solid var(--glass-line);border-radius:20px}
+.tag{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;font-family:var(--mono);font-size:12px;letter-spacing:-.02em;text-transform:uppercase;padding:5px 12px}
+.tag .d{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.left{display:flex;flex-direction:column;gap:20px}
+.prog{padding:22px}
+.prog .h{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.prog .pct{font-family:var(--mono);font-size:13px;color:var(--green)}
+.ptop{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-size:12.5px;color:var(--txt-d);margin-bottom:9px}
+.ptop b{color:#fff}
+.track{height:9px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.1);border-radius:100px;overflow:hidden}
+.fill{height:100%;width:68.4%;background:linear-gradient(90deg,#0B292A,var(--green));border-radius:100px;position:relative}
+.fill::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);transform:translateX(-100%);animation:shine 3s infinite}
+@keyframes shine{0%{transform:translateX(-100%)}60%,100%{transform:translateX(260%)}}
+.psub{display:flex;justify-content:space-between;margin-top:9px;font-family:var(--mono);font-size:10.5px;color:var(--txt-d2)}
+.statgrid{display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid var(--glass-line);border-radius:16px;overflow:hidden}
+.statgrid .sc{padding:18px 16px 20px;border-right:1px solid var(--glass-line)}
+.statgrid .sc:last-child{border-right:none}
+.statgrid .ic{color:var(--green);margin-bottom:22px}
+.statgrid .v{font-size:23px;font-weight:500;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.statgrid .v span{font-size:13px;color:var(--txt-d)}
+.statgrid .k{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;color:var(--txt-d2);margin-top:8px;line-height:1.4}
+.steps{padding:22px}
+.steps .h{margin-bottom:16px}
+.step{display:flex;align-items:flex-start;gap:14px;padding:13px 0;border-top:1px solid var(--glass-line)}
+.step:first-of-type{border-top:none;padding-top:4px}
+.step .n{font-family:var(--mono);font-size:11px;color:var(--green);width:52px;flex:none;text-transform:uppercase;padding-top:2px}
+.step .d{font-size:13.5px;color:var(--txt-d);line-height:1.45}
+.step .d b{color:#fff;font-weight:500}
+.trust{display:flex;gap:10px;flex-wrap:wrap}
+.chip{display:flex;align-items:center;gap:8px;border:1px solid rgba(0,174,108,.4);background:rgba(0,174,108,.05);border-radius:100px;padding:8px 14px;font-family:var(--mono);font-size:12px;color:var(--green)}
+.card{padding:24px}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .glyph{width:24px;height:24px}
+.brand b{font-size:17px;font-weight:600;letter-spacing:-.02em}
+.wallet{background:rgba(255,255,255,.08);border:1px solid var(--glass-line);border-radius:100px;padding:9px 16px;font-family:var(--display);font-size:13.5px;font-weight:500;color:#fff;cursor:pointer;display:flex;align-items:center;gap:8px;transition:.15s}
+.wallet:hover{background:rgba(255,255,255,.12)}
+.wallet.on{background:rgba(0,174,108,.14);border-color:rgba(0,174,108,.4);color:var(--green)}
+.wallet .d{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.rate{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1px solid var(--glass-line);border-radius:12px;background:rgba(255,255,255,.02);margin-bottom:16px}
+.rate .l{font-size:13px;color:var(--txt-d)}
+.rate .r{font-family:var(--mono);font-size:14px}
+.fld{background:var(--field);border:1px solid var(--glass-line);border-radius:14px;padding:15px 16px}
+.fld .t{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--txt-d2);margin-bottom:10px}
+.fld .t .mx{color:var(--green);cursor:pointer}
+.fld .m{display:flex;align-items:center;justify-content:space-between}
+.fld input{background:none;border:none;color:#fff;font-family:var(--mono);font-size:28px;font-weight:500;width:60%;outline:none;letter-spacing:-.02em}
+.fld input::placeholder{color:rgba(255,255,255,.25)}
+.fld .val{font-family:var(--mono);font-size:28px;font-weight:500;letter-spacing:-.02em}
+.sel{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:6px 11px 6px 6px;cursor:pointer;flex:none}
+.sel .cn{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none}
+.cn.eth{background:linear-gradient(135deg,#8ea2f0,#627eea)}.cn.usdt{background:#26a17b}.cn.sogc{background:linear-gradient(135deg,#0B292A,#00AE6C)}
+.sel .nm{font-family:var(--mono);font-size:15px}
+.sel .ar{color:var(--txt-d2);font-size:11px}
+.swap{display:flex;justify-content:center;margin:-14px 0;position:relative;z-index:3}
+.swap div{width:40px;height:40px;border-radius:50%;background:rgba(8,17,14,.92);border:1px solid var(--glass-line);color:var(--txt-d2);display:grid;place-items:center}
+.fld.out{background:linear-gradient(180deg,rgba(0,174,108,.1),rgba(0,174,108,.03));border-color:rgba(0,174,108,.3)}
+.fld.out .val{color:#fff}
+.holdings{display:none;align-items:center;justify-content:space-between;margin-top:16px;padding:13px 16px;border:1px solid rgba(0,174,108,.3);background:linear-gradient(180deg,rgba(0,174,108,.08),rgba(0,174,108,.02));border-radius:12px}
+.holdings.show{display:flex}
+.holdings .l{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--txt-d2)}
+.holdings .l .gi{width:18px;height:18px;color:var(--green)}
+.holdings .r{font-family:var(--mono);font-size:16px;font-weight:500;text-align:right}
+.cta{margin-top:16px;width:100%;height:54px;border:none;border-radius:12px;background:var(--green);color:#04130c;font-family:var(--display);font-weight:600;font-size:17px;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;gap:9px}
+.cta:hover{filter:brightness(1.08)}
+.cta.locked{background:rgba(255,255,255,.12);color:var(--txt-d2);cursor:default}
+.cta.locked:hover{filter:none}
+@media(max-width:920px){.wrap{grid-template-columns:1fr;max-width:480px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
 <body>
-<div class="app">
-
-<!-- SIDEBAR -->
-<aside class="side">
-  <div class="brand">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <span style="width:28px;height:28px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;"><i class="hgi-stroke hgi-radar-01"></i></span>
-      <span style="font-size:20px;font-weight:600;letter-spacing:-0.5px;color:#000;">Sentry</span>
+<div class="bg"></div>
+<main class="wrap">
+  <section class="left">
+    <div class="prog glass">
+      <div class="h"><span class="tag">Pre-sale · Stage 2</span><span class="pct">68.4%</span></div>
+      <div class="ptop"><span><b>68,402,118</b> SOGC sold</span><span>of 100,000,000</span></div>
+      <div class="track"><div class="fill"></div></div>
+      <div class="psub"><span>Stage 2 — $0.042</span><span>Rises to $0.051 at 70%</span></div>
     </div>
-  </div>
-  <nav class="nav" id="nav">
-    <div class="nav-item active" data-view="dashboard"><i class="hgi-stroke hgi-dashboard-square-01"></i>Dashboard</div>
-    <div class="nav-item" data-view="agents"><i class="hgi-stroke hgi-bot"></i>Agents <span class="badge">8</span></div>
-    <div class="nav-div"></div>
-    <div class="nav-item" data-view="evaluations"><i class="hgi-stroke hgi-task-01"></i>Evaluations</div>
-    <div class="nav-item" data-view="traces"><i class="hgi-stroke hgi-share-08"></i>Traces</div>
-    <div class="nav-div"></div>
-    <div class="nav-item" data-view="incidents"><i class="hgi-stroke hgi-alert-02"></i>Incidents <span class="badge">3</span></div>
-    <div class="nav-item" data-view="logs"><i class="hgi-stroke hgi-file-02"></i>Logs</div>
-    <div class="nav-item" data-view="deployments"><i class="hgi-stroke hgi-rocket-01"></i>Deployments</div>
-    <div class="nav-item" data-view="cost"><i class="hgi-stroke hgi-money-bag-01"></i>Cost</div>
-    <div class="nav-div"></div>
-    <div class="nav-item" data-view="alerts"><i class="hgi-stroke hgi-notification-02"></i>Alerts</div>
-    <div class="nav-item" data-view="settings"><i class="hgi-stroke hgi-settings-02"></i>Settings</div>
-  </nav>
-  <div class="side-foot">
-    <div class="user">
-      <span class="av">VM</span>
-      <div class="user-info"><div class="nm">Vuk M.</div><div class="rl">Admin</div></div>
-    </div>
-  </div>
-</aside>
-
-<!-- MAIN -->
-<main class="main">
-  <div class="topbar">
-    <div><h1 id="ttl">Dashboard</h1><div class="crumb" id="crumb">production · all agents</div></div>
-    <div class="topbar-r">
-      <div class="stepper" id="date-stepper"><div class="ar" data-step="-1"><i class="hgi-stroke hgi-arrow-left-01"></i></div><div class="lb" id="date-label">Last 7 days</div><div class="ar" data-step="1"><i class="hgi-stroke hgi-arrow-right-01"></i></div></div>
-      <div class="ico-btn" data-action="notifications"><i class="hgi-stroke hgi-notification-02"></i></div>
-      <div class="ico-btn" data-action="quick-add"><i class="hgi-stroke hgi-add-01"></i></div>
-    </div>
-  </div>
-
-  <div class="scroll">
-
-    <!-- ══════ DASHBOARD ══════ -->
-    <div class="view active" id="v-dashboard">
-      <div class="kpis" style="grid-template-columns:repeat(6,1fr)">
-        <div class="kpi"><div class="lbl">Success Rate</div><div class="val">94.2<small>%</small></div><div class="sub neg"><i class="hgi-stroke hgi-arrow-down-right-01"></i>1.3% <span class="dim">vs last wk</span></div></div>
-        <div class="kpi"><div class="lbl">Tasks Completed</div><div class="val">28.4K</div><div class="sub neg"><i class="hgi-stroke hgi-arrow-up-right-01 neg"></i><span class="neg">+12%</span> <span class="dim">vs last wk</span></div></div>
-        <div class="kpi"><div class="lbl">Avg Response</div><div class="val">3.2<small>s</small></div><div class="sub pos"><i class="hgi-stroke hgi-arrow-up-right-01"></i>0.4s <span class="dim">slower</span></div></div>
-        <div class="kpi"><div class="lbl">Cost / Task</div><div class="val">$0.04</div><div class="sub pos"><i class="hgi-stroke hgi-arrow-up-right-01"></i>12% <span class="dim">higher</span></div></div>
-        <div class="kpi"><div class="lbl">Active Agents</div><div class="val">8</div><div class="sub"><span class="dim">2 degraded</span></div></div>
-        <div class="kpi"><div class="lbl">Open Incidents</div><div class="val" style="color:var(--accent)">3</div><div class="sub pos"><i class="hgi-stroke hgi-alert-02"></i>1 <span class="dim">critical</span></div></div>
+    <div class="statgrid">
+      <div class="sc">
+        <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M17 12C17 14.7614 14.7614 17 12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12Z" stroke="currentColor" stroke-width="1.5"/><path d="M12 2V3.5M12 20.5V22M19.0708 19.0713L18.0101 18.0106M5.98926 5.98926L4.9286 4.9286M22 12H20.5M3.5 12H2M19.0713 4.92871L18.0106 5.98937M5.98975 18.0107L4.92909 19.0714" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"/></svg></div>
+        <div class="v">146<span> MW</span></div>
+        <div class="k">Trebinje 1 park capacity</div>
       </div>
-      <div class="chart-grid" style="padding-top:24px">
-        <div class="chart-card"><div class="cc-head"><div><div class="cc-title">Success Rate</div><div class="cc-val">94.2%</div><div class="cc-sub neg">▲ was 95.5% last week</div></div></div><div class="bars-wrap" id="ch-success"></div></div>
-        <div class="chart-card"><div class="cc-head"><div><div class="cc-title">Avg Latency</div><div class="cc-val">3.2s</div><div class="cc-sub pos">▲ above 2.8s target</div></div></div><div class="bars-wrap" id="ch-latency"></div></div>
-        <div class="chart-card"><div class="cc-head"><div><div class="cc-title">Cost / Day</div><div class="cc-val">$1,240</div><div class="cc-sub pos">▲ +18% this week</div></div></div><div class="bars-wrap" id="ch-cost"></div></div>
-        <div class="chart-card"><div class="cc-head"><div><div class="cc-title">Error Rate</div><div class="cc-val">5.8%</div><div class="cc-sub pos">▲ spiked yesterday</div></div></div><div class="bars-wrap" id="ch-error"></div></div>
+      <div class="sc">
+        <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M2 10C2.77968 6.18409 5.66918 3.12932 9.40618 2.08977C9.71987 2.00251 9.87671 1.95888 9.96119 2.05236C10.0457 2.14584 9.98344 2.30042 9.85897 2.60956L9 4.5M14 2C17.8159 2.77968 20.8707 5.66918 21.9102 9.40618C21.9975 9.71987 22.0411 9.87671 21.9476 9.96119C21.8542 10.0457 21.6996 9.98344 21.3904 9.85897L19.5 9M22 14C21.2203 17.8159 18.3308 20.8707 14.5938 21.9102C14.2801 21.9975 14.1233 22.0411 14.0388 21.9476C13.9543 21.8542 14.0166 21.6996 14.141 21.3904L15 19.5M10 22C6.18409 21.2203 3.12932 18.3308 2.08977 14.5938C2.00251 14.2801 1.95888 14.1233 2.05236 14.0388C2.14584 13.9543 2.30042 14.0166 2.60956 14.141L4.5 15" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"/><path d="M8.61288 11.6647L12.112 7.17326C12.3857 6.82199 12.8986 7.04062 12.8986 7.50853V10.985C12.8986 11.2653 13.0998 11.4925 13.3479 11.4925H15.0498C15.4364 11.4925 15.6425 12.0074 15.3871 12.3353L11.888 16.8267C11.6143 17.178 11.1014 16.9594 11.1014 16.4915V13.015C11.1014 12.7347 10.9002 12.5075 10.6521 12.5075H8.95018C8.56356 12.5075 8.35747 11.9926 8.61288 11.6647Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+        <div class="v">~190K<span> T</span></div>
+        <div class="k">CO&#8322; eliminated annually</div>
       </div>
-      <div class="section" style="padding-top:0">
-        <div class="sec-head"><h2>Agent Health</h2><div class="sec-r"><div class="pill">All environments <i class="hgi-stroke hgi-arrow-down-01"></i></div></div></div>
-        <table><thead><tr><th>Agent</th><th>Environment</th><th>Version</th><th>Success</th><th>Avg Latency</th><th>Cost/Task</th><th>Status</th></tr></thead><tbody id="rows-agents-dash"></tbody></table>
+      <div class="sc">
+        <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18.7088 3.49534C16.8165 2.55382 14.5009 2 12 2C9.4991 2 7.1835 2.55382 5.29116 3.49534C4.36318 3.95706 3.89919 4.18792 3.4496 4.91378C3 5.63965 3 6.34248 3 7.74814V11.2371C3 16.9205 7.54236 20.0804 10.173 21.4338C10.9067 21.8113 11.2735 22 12 22C12.7265 22 13.0933 21.8113 13.8269 21.4338C16.4576 20.0804 21 16.9205 21 11.2371L21 7.74814C21 6.34249 21 5.63966 20.5504 4.91378C20.1008 4.18791 19.6368 3.95706 18.7088 3.49534Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>
+        <div class="v">50<span> yrs</span></div>
+        <div class="k">Concession secured</div>
       </div>
     </div>
-
-    <!-- ══════ AGENTS ══════ -->
-    <div class="view" id="v-agents">
-      <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
-        <div class="kpi"><div class="lbl">Total Agents</div><div class="val">8</div><div class="sub neg"><i class="hgi-stroke hgi-checkmark-circle-02"></i><span class="dim">6 healthy</span></div></div>
-        <div class="kpi"><div class="lbl">Avg Success Rate</div><div class="val">94.2<small>%</small></div><div class="sub pos"><i class="hgi-stroke hgi-arrow-up-right-01"></i>1.3% <span class="dim">vs last wk</span></div></div>
-        <div class="kpi"><div class="lbl">Total Tasks Today</div><div class="val">4.1K</div><div class="sub neg"><i class="hgi-stroke hgi-arrow-up-right-01 neg"></i><span class="neg">+8%</span> <span class="dim">vs yesterday</span></div></div>
-        <div class="kpi"><div class="lbl">Total Cost Today</div><div class="val">$182</div><div class="sub pos"><i class="hgi-stroke hgi-arrow-up-right-01"></i>12% <span class="dim">vs avg</span></div></div>
+    <div class="steps glass">
+      <div class="h"><span class="tag">How it works</span></div>
+      <div class="step"><div class="n">Step 1</div><div class="d"><b>Connect</b> your wallet to join the pre-sale.</div></div>
+      <div class="step"><div class="n">Step 2</div><div class="d"><b>Contribute</b> in ETH or USDT at the locked stage rate.</div></div>
+      <div class="step"><div class="n">Step 3</div><div class="d"><b>Receive SOGC</b> &mdash; collateralised by real solar yield, vesting linear over 6 months.</div></div>
+    </div>
+    <div class="trust">
+      <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18.7088 3.49534C16.8165 2.55382 14.5009 2 12 2C9.4991 2 7.1835 2.55382 5.29116 3.49534C4.36318 3.95706 3.89919 4.18792 3.4496 4.91378C3 5.63965 3 6.34248 3 7.74814V11.2371C3 16.9205 7.54236 20.0804 10.173 21.4338C10.9067 21.8113 11.2735 22 12 22C12.7265 22 13.0933 21.8113 13.8269 21.4338C16.4576 20.0804 21 16.9205 21 11.2371L21 7.74814C21 6.34249 21 5.63966 20.5504 4.91378C20.1008 4.18791 19.6368 3.95706 18.7088 3.49534Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg> Audited by CertiK</span>
+      <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12Z" stroke="currentColor" stroke-width="1.5"/><path d="M12 2L13.5 4M12 22L10.5 20M20 12L18 13.5M4 12L6 10.5" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"/></svg> Multi-sig 4 / 7</span>
+      <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 8V12L14 14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/><path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="1.5"/></svg> 6-month vesting</span>
+    </div>
+  </section>
+  <section class="card glass">
+    <div class="top">
+      <div class="brand">
+        <svg class="glyph" viewBox="0 0 100 100" fill="#fff"><path d="M50 6 L58 38 L90 30 L62 50 L90 70 L58 62 L50 94 L42 62 L10 70 L38 50 L10 30 L42 38 Z"/></svg>
+        <b>Solaris</b>
       </div>
-      <div class="section">
-        <div class="sec-head"><h2>All Agents</h2><div class="sec-r"><div class="pill">Filter <i class="hgi-stroke hgi-filter"></i></div><button class="btn-pri" data-action="deploy-agent"><i class="hgi-stroke hgi-add-01"></i>Deploy agent</button></div></div>
-        <table><thead><tr><th>Agent</th><th>Environment</th><th>Version</th><th>Uptime</th><th>Success</th><th>Avg Cost</th><th>Last Deploy</th><th>Status</th></tr></thead><tbody id="rows-agents"></tbody></table>
+      <button class="wallet" id="wallet">Connect Wallet</button>
+    </div>
+    <div class="rate"><span class="l">Current rate</span><span class="r">1 SOGC = $0.042</span></div>
+    <div class="fld">
+      <div class="t"><span>You pay</span><span>Balance 4.20 <span class="mx" id="max">MAX</span></span></div>
+      <div class="m">
+        <input id="pay" inputmode="decimal" value="1.0">
+        <div class="sel" id="sel"><span class="cn eth" id="payIcon"></span><span class="nm" id="payCur">ETH</span><span class="ar">&#9660;</span></div>
       </div>
     </div>
-
-    <!-- ══════ EVALUATIONS ══════ -->
-    <div class="view" id="v-evaluations">
-      <div class="kpis" style="grid-template-columns:repeat(5,1fr)">
-        <div class="kpi"><div class="lbl">Task Success</div><div class="val">94.2<small>%</small></div><div class="sub pos"><i class="hgi-stroke hgi-arrow-up-right-01"></i>1.3% <span class="dim">regression</span></div></div>
-        <div class="kpi"><div class="lbl">Tool Usage</div><div class="val">88.7<small>%</small></div><div class="sub neg"><i class="hgi-stroke hgi-arrow-up-right-01 neg"></i><span class="neg">+2.1%</span></div></div>
-        <div class="kpi"><div class="lbl">Hallucination Rate</div><div class="val">2.4<small>%</small></div><div class="sub pos"><i class="hgi-stroke hgi-arrow-up-right-01"></i>0.6% <span class="dim">worsened</span></div></div>
-        <div class="kpi"><div class="lbl">Retrieval Accuracy</div><div class="val">91.8<small>%</small></div><div class="sub neg"><i class="hgi-stroke hgi-arrow-down-right-01"></i>0.8% <span class="dim">improved</span></div></div>
-        <div class="kpi"><div class="lbl">Goal Completion</div><div class="val">79.3<small>%</small></div><div class="sub pos"><i class="hgi-stroke hgi-arrow-up-right-01"></i>3.2% <span class="dim">regression</span></div></div>
-      </div>
-      <div class="eval-grid" style="padding-top:24px" id="eval-cards"></div>
-      <div class="section" style="padding-top:0">
-        <div class="sec-head"><h2>Evaluation runs</h2><div class="sec-r"><div class="pill">All agents <i class="hgi-stroke hgi-arrow-down-01"></i></div><button class="btn-pri" data-action="run-eval"><i class="hgi-stroke hgi-add-01"></i>Run evaluation</button></div></div>
-        <table><thead><tr><th>Agent</th><th>Benchmark</th><th>Task Success</th><th>Hallucination</th><th>Goal Completion</th><th>vs Previous</th><th>Run at</th></tr></thead><tbody id="rows-evals"></tbody></table>
+    <div class="swap"><div><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 19L15 6.65856C15 5.65277 15 5.14987 15.3087 5.02472C15.6173 4.89956 15.9806 5.25517 16.7071 5.96637L19 8.21091" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/><path d="M9 5L9 17.3414C9 18.3472 9 18.8501 8.69134 18.9753C8.38268 19.1004 8.01942 18.7448 7.29289 18.0336L5 15.7891" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div></div>
+    <div class="fld out">
+      <div class="t"><span>You receive</span><span id="recvusd">&#8776; $3,180.00</span></div>
+      <div class="m">
+        <div class="val" id="recv">75,714</div>
+        <div class="sel"><span class="cn sogc"><svg width="14" height="14" viewBox="0 0 100 100" fill="#fff"><path d="M50 6 L58 38 L90 30 L62 50 L90 70 L58 62 L50 94 L42 62 L10 70 L38 50 L10 30 L42 38 Z"/></svg></span><span class="nm">SOGC</span></div>
       </div>
     </div>
-
-    <!-- ══════ TRACES ══════ -->
-    <div class="view" id="v-traces">
-      <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
-        <div class="kpi"><div class="lbl">Traces / min</div><div class="val">3.2K</div><div class="sub pos"><i class="hgi-stroke hgi-arrow-up-right-01"></i>6% <span class="dim">vs last hr</span></div></div>
-        <div class="kpi"><div class="lbl">Avg Duration</div><div class="val">3.2<small>s</small></div><div class="sub pos"><i class="hgi-stroke hgi-arrow-up-right-01"></i>0.4s <span class="dim">slower</span></div></div>
-        <div class="kpi"><div class="lbl">Avg Tokens</div><div class="val">1.8K</div><div class="sub pos"><i class="hgi-stroke hgi-arrow-up-right-01"></i>12% <span class="dim">higher</span></div></div>
-        <div class="kpi"><div class="lbl">Error Spans</div><div class="val">142</div><div class="sub neg"><i class="hgi-stroke hgi-arrow-down-right-01"></i>12% <span class="dim">recovering</span></div></div>
-      </div>
-      <div class="trace-legend">
-        <span class="tl-item"><span class="tl-dot" style="background:var(--blue)"></span>Network</span>
-        <span class="tl-item"><span class="tl-dot" style="background:var(--slate)"></span>Planner</span>
-        <span class="tl-item"><span class="tl-dot" style="background:var(--accent)"></span>LLM Call</span>
-        <span class="tl-item"><span class="tl-dot" style="background:var(--amber)"></span>Tool / DB</span>
-        <span class="tl-item"><span class="tl-dot" style="background:var(--green)"></span>Response</span>
-      </div>
-      <div style="border-top:1px solid var(--line)">
-        <div style="display:flex;align-items:center;gap:12px;padding:12px 28px;border-bottom:1px solid var(--line);">
-          <span style="font-family:var(--mono);font-size:10px;font-weight:600;color:var(--muted);width:88px;text-transform:uppercase;letter-spacing:0.5px;">Trace ID</span>
-          <span style="font-size:10px;font-weight:600;color:var(--muted);width:180px;text-transform:uppercase;letter-spacing:0.5px;">Operation</span>
-          <span style="flex:1;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">Waterfall</span>
-          <span style="font-family:var(--mono);font-size:10px;font-weight:600;color:var(--muted);width:60px;text-align:right;text-transform:uppercase;letter-spacing:0.5px;">Duration</span>
-          <span style="font-family:var(--mono);font-size:10px;font-weight:600;color:var(--muted);width:56px;text-align:right;text-transform:uppercase;letter-spacing:0.5px;">Tokens</span>
-        </div>
-        <div id="traces-list"></div>
-      </div>
+    <div class="holdings" id="holdings">
+      <div class="l"><svg class="gi" viewBox="0 0 100 100" fill="currentColor"><path d="M50 6 L58 38 L90 30 L62 50 L90 70 L58 62 L50 94 L42 62 L10 70 L38 50 L10 30 L42 38 Z"/></svg> Your SOGC balance</div>
+      <div class="r" id="held">12,500 SOGC</div>
     </div>
-
-    <!-- ══════ INCIDENTS ══════ -->
-    <div class="view" id="v-incidents">
-      <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
-        <div class="kpi"><div class="lbl">Active</div><div class="val" style="color:var(--accent)">3</div><div class="sub pos"><i class="hgi-stroke hgi-alert-02"></i>1 <span class="dim">critical</span></div></div>
-        <div class="kpi"><div class="lbl">Acknowledged</div><div class="val">2</div><div class="sub"><span class="dim">being handled</span></div></div>
-        <div class="kpi"><div class="lbl">Resolved 24h</div><div class="val">11</div><div class="sub neg"><i class="hgi-stroke hgi-checkmark-circle-02"></i><span class="dim">avg 14m MTTR</span></div></div>
-        <div class="kpi"><div class="lbl">Affected Agents</div><div class="val">4</div><div class="sub pos"><i class="hgi-stroke hgi-bot"></i><span class="dim">2 degraded</span></div></div>
-      </div>
-      <div class="section">
-        <div class="sec-head"><h2>Active incidents</h2><div class="sec-r"><div class="pill">All severity <i class="hgi-stroke hgi-arrow-down-01"></i></div></div></div>
-      </div>
-      <div id="incidents-list"></div>
-    </div>
-
-    <!-- ══════ LOGS ══════ -->
-    <div class="view" id="v-logs">
-      <div style="display:flex;align-items:center;gap:8px;padding:20px 28px 0;">
-        <div class="pill on">All</div><div class="pill">Error</div><div class="pill">Warn</div><div class="pill">Info</div><div class="pill">Debug</div>
-        <div style="flex:1;display:flex;align-items:center;gap:8px;height:34px;padding:0 14px;border:1px solid var(--line2);border-radius:8px;color:var(--muted);margin-left:8px;"><i class="hgi-stroke hgi-search-01" style="font-size:16px;"></i><input placeholder="Search logs…" style="border:none;outline:none;background:none;font-family:inherit;font-size:12px;width:100%;"></div>
-        <div class="pill"><i class="hgi-stroke hgi-filter"></i>Filter by agent</div>
-      </div>
-      <table style="margin-top:16px"><thead><tr><th style="width:100px">Time</th><th style="width:70px">Level</th><th style="width:140px">Agent</th><th>Message</th></tr></thead><tbody id="rows-logs"></tbody></table>
-    </div>
-
-    <!-- ══════ DEPLOYMENTS ══════ -->
-    <div class="view" id="v-deployments">
-      <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
-        <div class="kpi"><div class="lbl">Total Releases</div><div class="val">24</div><div class="sub"><span class="dim">last 30 days</span></div></div>
-        <div class="kpi"><div class="lbl">Last Deploy</div><div class="val">8<small>m ago</small></div><div class="sub neg"><i class="hgi-stroke hgi-checkmark-circle-02"></i><span class="dim">success</span></div></div>
-        <div class="kpi"><div class="lbl">Avg Deploy Freq</div><div class="val">2.4<small>/day</small></div><div class="sub"></div></div>
-        <div class="kpi"><div class="lbl">Rollbacks</div><div class="val">2</div><div class="sub pos"><i class="hgi-stroke hgi-arrow-turn-backward"></i><span class="dim">this month</span></div></div>
-      </div>
-      <div class="section"><div class="sec-head"><h2>Release timeline</h2><div class="sec-r"><div class="pill">All agents <i class="hgi-stroke hgi-arrow-down-01"></i></div><button class="btn-pri" data-action="new-deploy"><i class="hgi-stroke hgi-add-01"></i>New deployment</button></div></div></div>
-      <div class="dep-timeline" id="dep-list"></div>
-    </div>
-
-    <!-- ══════ COST ══════ -->
-    <div class="view" id="v-cost">
-      <div class="cost-cards">
-        <div class="cost-card"><div class="lbl">Total Spend</div><div class="val">$8,420</div><div class="sub pos">▲ 18% this month</div></div>
-        <div class="cost-card"><div class="lbl">By Model</div><div class="val">$5,210</div><div class="sub" style="color:var(--muted)">GPT-4o largest</div></div>
-        <div class="cost-card"><div class="lbl">By Agent</div><div class="val">$2,840</div><div class="sub" style="color:var(--muted)">research-agent #1</div></div>
-        <div class="cost-card"><div class="lbl">Token Usage</div><div class="val">210M</div><div class="sub pos">▲ 22% vs last mo</div></div>
-      </div>
-      <div class="chart-grid" style="padding-top:24px">
-        <div class="chart-card"><div class="cc-head"><div><div class="cc-title">Daily Cost</div><div class="cc-val">$1,240</div></div></div><div class="bars-wrap" id="ch-daily-cost"></div></div>
-        <div class="chart-card"><div class="cc-head"><div><div class="cc-title">Token Usage / Day</div><div class="cc-val">7.1M</div></div></div><div class="bars-wrap" id="ch-tokens"></div></div>
-      </div>
-      <div class="section" style="padding-top:0">
-        <div class="sec-head"><h2>Spend by agent</h2></div>
-      </div>
-      <div id="cost-list"></div>
-      <div class="section">
-        <div class="sec-head"><h2>Spend by model</h2></div>
-      </div>
-      <div id="model-list"></div>
-    </div>
-
-    <!-- ══════ ALERTS ══════ -->
-    <div class="view" id="v-alerts">
-      <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
-        <div class="kpi"><div class="lbl">Active Rules</div><div class="val">12</div><div class="sub"><span class="dim">3 firing now</span></div></div>
-        <div class="kpi"><div class="lbl">Fired 24h</div><div class="val">7</div><div class="sub pos"><i class="hgi-stroke hgi-arrow-up-right-01"></i>3 <span class="dim">more than avg</span></div></div>
-        <div class="kpi"><div class="lbl">Silenced</div><div class="val">2</div><div class="sub"><span class="dim">until tomorrow</span></div></div>
-        <div class="kpi"><div class="lbl">Channels</div><div class="val">4</div><div class="sub"><span class="dim">Slack · PagerDuty</span></div></div>
-      </div>
-      <div class="section">
-        <div class="sec-head"><h2>Alert rules</h2><div class="sec-r"><button class="btn-pri" data-action="new-rule"><i class="hgi-stroke hgi-add-01"></i>New rule</button></div></div>
-      </div>
-      <div id="alerts-list"></div>
-    </div>
-
-    <!-- ══════ SETTINGS ══════ -->
-    <div class="view" id="v-settings">
-      <div class="set-grid">
-        <div class="set-sec">
-          <h3>Models</h3>
-          <div class="set-row"><div class="info"><div class="t">Default model</div><div class="d">Used when agent has no override</div></div><div class="ctl"><select class="set-input"><option>gpt-4o</option><option>gpt-4-turbo</option><option>claude-3-5-sonnet</option></select></div></div>
-          <div class="set-row"><div class="info"><div class="t">Fallback model</div><div class="d">Used on rate-limit or error</div></div><div class="ctl"><select class="set-input"><option>gpt-4o-mini</option><option>claude-haiku</option></select></div></div>
-          <div class="set-row"><div class="info"><div class="t">Max tokens</div><div class="d">Per request cap</div></div><div class="ctl"><input class="set-input" value="4096" style="width:100px"></div></div>
-        </div>
-        <div class="set-sec">
-          <h3>API Keys</h3>
-          <div class="set-row"><div class="info"><div class="t">OpenAI</div><div class="d">sk-•••••••••••••••••2f8a</div></div><div class="ctl"><div class="pill">Rotate</div></div></div>
-          <div class="set-row"><div class="info"><div class="t">Anthropic</div><div class="d">sk-ant-•••••••••••••4c2b</div></div><div class="ctl"><div class="pill">Rotate</div></div></div>
-          <div class="set-row"><div class="info"><div class="t">Sentry API</div><div class="d">sntr-•••••••••••••9d1e</div></div><div class="ctl"><div class="pill">Rotate</div></div></div>
-        </div>
-        <div class="set-sec">
-          <h3>Team Members</h3>
-          <div class="set-row"><div class="info"><div class="t">Vuk M.</div><div class="d">Admin · vuk@velora.studio</div></div><div class="ctl"><span class="st st-ok"><span class="d"></span>admin</span></div></div>
-          <div class="set-row"><div class="info"><div class="t">Alex K.</div><div class="d">Engineer · alex@company.io</div></div><div class="ctl"><span class="st st-info"><span class="d"></span>member</span></div></div>
-          <div class="set-row"><div class="info"><div class="t">Invite member</div><div class="d">Send an invite link</div></div><div class="ctl"><button class="btn-pri" data-action="invite" style="height:30px;font-size:11px"><i class="hgi-stroke hgi-add-01"></i>Invite</button></div></div>
-        </div>
-        <div class="set-sec">
-          <h3>Environments</h3>
-          <div class="set-row"><div class="info"><div class="t">Production</div><div class="d">Live environment</div></div><div class="ctl"><div class="toggle on" data-toggle></div></div></div>
-          <div class="set-row"><div class="info"><div class="t">Staging</div><div class="d">Pre-release testing</div></div><div class="ctl"><div class="toggle on" data-toggle></div></div></div>
-          <div class="set-row"><div class="info"><div class="t">Development</div><div class="d">Local testing</div></div><div class="ctl"><div class="toggle" data-toggle></div></div></div>
-        </div>
-        <div class="set-sec" style="grid-column:span 2">
-          <h3>Integrations</h3>
-          <div class="set-row"><div class="info"><div class="t">Slack</div><div class="d">Alert notifications to #incidents</div></div><div class="ctl"><div class="toggle on" data-toggle></div></div></div>
-          <div class="set-row"><div class="info"><div class="t">PagerDuty</div><div class="d">Critical alerts only</div></div><div class="ctl"><div class="toggle on" data-toggle></div></div></div>
-          <div class="set-row"><div class="info"><div class="t">Discord</div><div class="d">Daily digest</div></div><div class="ctl"><div class="toggle" data-toggle></div></div></div>
-          <div class="set-row"><div class="info"><div class="t">Email</div><div class="d">Weekly summary</div></div><div class="ctl"><div class="toggle on" data-toggle></div></div></div>
-        </div>
-      </div>
-    </div>
-
-  </div>
+    <button class="cta locked" id="cta">Connect wallet to continue</button>
+  </section>
 </main>
-</div>
-
-<!-- DRAWER -->
-<div class="drawer-scrim" id="scrim"></div>
-<aside class="drawer" id="drawer">
-  <div class="drawer-head">
-    <div class="drawer-title"><div class="a" id="d-title-a"></div><div class="b" id="d-title-b"></div></div>
-    <div id="d-status"></div>
-    <div class="ico-btn" id="drawer-close"><i class="hgi-stroke hgi-cancel-01"></i></div>
-  </div>
-  <div class="d-tabs" id="d-tabs"></div>
-  <div id="d-bodies" style="display:flex;flex-direction:column;flex:1;overflow:hidden;"></div>
-</aside>
-
-<!-- MODAL -->
-<div class="modal-scrim" id="modal-scrim">
-  <div class="modal">
-    <div class="modal-head"><div class="mh-ic" id="modal-ic"><i class="hgi-stroke hgi-add-01"></i></div><h3 id="modal-title"></h3><div class="ico-btn" id="modal-close"><i class="hgi-stroke hgi-cancel-01"></i></div></div>
-    <div class="modal-body" id="modal-body"></div>
-    <div class="modal-foot"><div class="d-btn" id="modal-cancel">Cancel</div><div class="d-btn pri" id="modal-submit">Create</div></div>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div class="toast-wrap" id="toast-wrap"></div>
-
-<!-- DROPDOWN -->
-<div class="menu-pop" id="menu-pop"></div>
-
 <script>
-
-// ── DATA ──
-const agents = [
-  {n:'research-agent',env:'production',ver:'v2.4.1',up:'99.8%',suc:'96.2%',cost:'$0.06',dep:'2h ago',s:'st-ok',si:'ok',rpm:'1.2K',lat:'4.1s',tools:['web-search','pdf-reader','summarizer']},
-  {n:'support-agent',env:'production',ver:'v1.9.3',up:'99.4%',suc:'94.8%',cost:'$0.03',dep:'8h ago',s:'st-ok',si:'ok',rpm:'3.4K',lat:'2.8s',tools:['kb-search','ticket-create','email']},
-  {n:'code-agent',env:'production',ver:'v3.1.0',up:'98.1%',suc:'89.2%',cost:'$0.11',dep:'1d ago',s:'st-warn',si:'warn',rpm:'420',lat:'8.2s',tools:['code-exec','git','test-runner']},
-  {n:'data-agent',env:'production',ver:'v1.2.8',up:'97.4%',suc:'91.0%',cost:'$0.08',dep:'3d ago',s:'st-warn',si:'warn',rpm:'680',lat:'5.6s',tools:['sql-query','csv-parser','chart-gen']},
-  {n:'research-agent',env:'staging',ver:'v2.5.0-beta',up:'94.2%',suc:'93.1%',cost:'$0.07',dep:'30m ago',s:'st-ok',si:'ok',rpm:'210',lat:'3.9s',tools:['web-search','pdf-reader']},
-  {n:'support-agent',env:'staging',ver:'v2.0.0-rc',up:'99.1%',suc:'95.4%',cost:'$0.03',dep:'2h ago',s:'st-ok',si:'ok',rpm:'140',lat:'2.6s',tools:['kb-search','ticket-create']},
-  {n:'planner-agent',env:'production',ver:'v1.0.4',up:'99.9%',suc:'97.8%',cost:'$0.02',dep:'5d ago',s:'st-ok',si:'ok',rpm:'890',lat:'1.4s',tools:['task-decompose','schedule']},
-  {n:'audit-agent',env:'production',ver:'v1.1.1',up:'99.6%',suc:'99.1%',cost:'$0.04',dep:'2d ago',s:'st-ok',si:'ok',rpm:'190',lat:'3.2s',tools:['log-read','report-gen']},
-];
-
-const SPAN={network:{c:'var(--blue)',l:'Network'},planner:{c:'var(--slate)',l:'Planner'},llm:{c:'var(--accent)',l:'LLM Call'},tool:{c:'var(--amber)',l:'Tool/DB'},response:{c:'var(--green)',l:'Response'}};
-const traces=[
-  {id:'7f3a9c2e',agent:'research-agent',op:'user_request → research',dur:'4.1s',tokens:'2.4K',cost:'$0.07',segs:[[0,8,'network'],[8,22,'planner'],[22,58,'tool'],[58,88,'llm'],[88,100,'response']]},
-  {id:'b21e8d04',agent:'support-agent',op:'ticket resolution flow',dur:'2.8s',tokens:'1.1K',cost:'$0.03',segs:[[0,10,'network'],[10,20,'planner'],[20,55,'tool'],[55,90,'llm'],[90,100,'response']]},
-  {id:'c9d4f117',agent:'code-agent',op:'debug → fix → test',dur:'8.2s',tokens:'4.8K',cost:'$0.14',segs:[[0,5,'network'],[5,18,'planner'],[18,62,'llm'],[62,92,'tool'],[92,100,'response']]},
-  {id:'1a6b3e90',agent:'data-agent',op:'sql query + analysis',dur:'5.6s',tokens:'1.8K',cost:'$0.08',segs:[[0,8,'network'],[8,16,'planner'],[16,60,'tool'],[60,88,'llm'],[88,100,'response']]},
-  {id:'e58c2270',agent:'planner-agent',op:'task decomposition',dur:'1.4s',tokens:'820',cost:'$0.02',segs:[[0,12,'network'],[12,40,'planner'],[40,84,'llm'],[84,100,'response']]},
-  {id:'4d7a9c11',agent:'research-agent',op:'multi-source synthesis',dur:'6.8s',tokens:'3.2K',cost:'$0.09',segs:[[0,6,'network'],[6,18,'planner'],[18,52,'tool'],[52,86,'llm'],[86,100,'response']]},
-  {id:'9b0e5c8a',agent:'audit-agent',op:'compliance check',dur:'3.2s',tokens:'1.4K',cost:'$0.04',segs:[[0,10,'network'],[10,20,'planner'],[20,50,'tool'],[50,88,'llm'],[88,100,'response']]},
-];
-
-const incidents=[
-  {t:'Hallucination spike — research-agent',sev:'crit',svc:'research-agent',cause:'Model context window overflow, truncated retrieval results',time:'12m ago',aff:['research-agent','data-agent'],st:'st-crit',stl:'firing',timeline:['Alert triggered · 12m ago','Hallucination rate crossed 8% threshold','Regression detected vs v2.3.x baseline','On-call notified via PagerDuty']},
-  {t:'Tool failure — code-agent search tool',sev:'warn',svc:'code-agent',cause:'GitHub API rate limit hit, fallback unavailable',time:'44m ago',aff:['code-agent'],st:'st-warn',stl:'acked',timeline:['Acknowledged by Alex K. · 40m ago','Tool error rate reached 34%','GitHub API 429 errors started','Alert triggered · 44m ago']},
-  {t:'Latency regression — data-agent',sev:'warn',svc:'data-agent',cause:'Slow SQL queries after schema migration v1.2.8',time:'2h ago',aff:['data-agent'],st:'st-warn',stl:'acked',timeline:['Schema migration deployed · 3h ago','P95 latency crossed 6s','Alert triggered · 2h ago']},
-];
-
-const evals=[
-  {agent:'research-agent',bench:'FRAMES',ts:'96.2%',hall:'1.8%',gc:'84.1%',delta:'+0.4%',dc:'neg',at:'Today 09:12'},
-  {agent:'code-agent',bench:'HumanEval',ts:'89.2%',hall:'3.2%',gc:'71.4%',delta:'-4.1%',dc:'pos',at:'Today 08:30'},
-  {agent:'support-agent',bench:'Custom v3',ts:'94.8%',hall:'2.1%',gc:'81.2%',delta:'+1.2%',dc:'neg',at:'Today 07:45'},
-  {agent:'data-agent',bench:'BIRD-SQL',ts:'91.0%',hall:'2.8%',gc:'76.3%',delta:'-1.8%',dc:'pos',at:'Yesterday 22:00'},
-  {agent:'planner-agent',bench:'TaskBench',ts:'97.8%',hall:'0.9%',gc:'91.2%',delta:'+2.1%',dc:'neg',at:'Yesterday 18:20'},
-];
-
-const deploys=[
-  {ver:'v2.5.0-beta',agent:'research-agent',env:'staging',t:'30m ago',desc:'Improved retrieval with re-ranking, reduced hallucination',suc:'+1.2%',lat:'-0.3s',cost:'+$0.01',ok:true},
-  {ver:'v2.4.1',agent:'research-agent',env:'production',t:'2h ago',desc:'Hotfix: context window management',suc:'+0.8%',lat:'-0.1s',cost:'—',ok:true},
-  {ver:'v3.1.0',agent:'code-agent',env:'production',t:'1d ago',desc:'New test-runner tool, improved debugging flow',suc:'-4.1%',lat:'+0.6s',cost:'+$0.02',ok:false},
-  {ver:'v2.0.0-rc',agent:'support-agent',env:'staging',t:'2h ago',desc:'Migrated to new KB search API',suc:'+0.6%',lat:'-0.2s',cost:'—',ok:true},
-  {ver:'v1.0.4',agent:'planner-agent',env:'production',t:'5d ago',desc:'Task decomposition improvements',suc:'+2.1%',lat:'-0.4s',cost:'-$0.01',ok:true},
-];
-
-const alertRules=[
-  {n:'Success rate regression',cond:'success_rate < 90% for 5m',sev:'crit',sc:'st-crit',ch:['Slack','PagerDuty'],firing:true},
-  {n:'Latency above SLA',cond:'p95_latency > 10s for 3m',sev:'critical',sc:'st-crit',ch:['Slack'],firing:false},
-  {n:'Hallucination spike',cond:'hallucination_rate > 5%',sev:'critical',sc:'st-crit',ch:['Slack','PagerDuty'],firing:true},
-  {n:'Cost increase',cond:'cost_per_task increase > 20% vs 24h avg',sev:'warning',sc:'st-warn',ch:['Slack','Email'],firing:false},
-  {n:'Tool failure rate',cond:'tool_error_rate > 20% for 5m',sev:'warning',sc:'st-warn',ch:['Slack'],firing:true},
-  {n:'Evaluation regression',cond:'eval_score drops > 3% vs baseline',sev:'warning',sc:'st-warn',ch:['Email'],firing:false},
-  {n:'Goal completion drop',cond:'goal_completion < 75%',sev:'warning',sc:'st-warn',ch:['Slack'],firing:false},
-];
-
-const logData=[
-  ['error','lvl-err','research-agent','Hallucination detected: response contradicts source document'],
-  ['warn','lvl-warn','code-agent','GitHub API rate limit: 0 remaining, reset in 3600s'],
-  ['info','lvl-info','support-agent','Ticket TK-4821 resolved, CSAT score: 4/5'],
-  ['info','lvl-info','planner-agent','Task decomposed into 6 subtasks, dispatching agents'],
-  ['error','lvl-err','data-agent','SQL timeout after 30s: SELECT * FROM events WHERE…'],
-  ['warn','lvl-warn','research-agent','Context window 94% full, truncating retrieval results'],
-  ['debug','lvl-debug','audit-agent','Compliance check passed: 48/48 rules satisfied'],
-  ['info','lvl-info','support-agent','KB search returned 12 results, top score: 0.94'],
-  ['error','lvl-err','code-agent','Test runner failed: 3/12 tests failing after patch'],
-  ['debug','lvl-debug','planner-agent','Schedule optimized: parallel execution of tasks 3,4,5'],
-];
-
-const costByAgent=[
-  {n:'research-agent',spend:'$3,240',pct:38,tokens:'86M'},
-  {n:'code-agent',spend:'$2,180',pct:26,tokens:'58M'},
-  {n:'data-agent',spend:'$1,420',pct:17,tokens:'38M'},
-  {n:'support-agent',spend:'$860',pct:10,tokens:'22M'},
-  {n:'planner-agent',spend:'$420',pct:5,tokens:'4M'},
-  {n:'audit-agent',spend:'$300',pct:4,tokens:'2M'},
-];
-
-const costByModel=[
-  {n:'gpt-4o',spend:'$5,210',pct:62},
-  {n:'claude-3-5-sonnet',spend:'$1,840',pct:22},
-  {n:'gpt-4o-mini',spend:'$840',pct:10},
-  {n:'text-embedding-3',spend:'$530',pct:6},
-];
-
-const evalMetrics=[
-  {l:'Task Success',v:'94.2%',fill:94,delta:'-1.3%',dc:'pos',color:'var(--green)'},
-  {l:'Tool Usage',v:'88.7%',fill:89,delta:'+2.1%',dc:'neg',color:'var(--blue)'},
-  {l:'Hallucination',v:'2.4%',fill:2,delta:'+0.6%',dc:'pos',color:'var(--accent)',inv:true},
-  {l:'Retrieval Acc.',v:'91.8%',fill:92,delta:'+0.8%',dc:'neg',color:'var(--green)'},
-  {l:'Goal Completion',v:'79.3%',fill:79,delta:'-3.2%',dc:'pos',color:'var(--amber)'},
-  {l:'Benchmark (FRAMES)',v:'82.1',fill:82,delta:'-1.8%',dc:'pos',color:'var(--slate)'},
-];
-
-function trend(seed,cls){let h='';for(let i=0;i<12;i++){const v=4+Math.round((Math.sin(seed+i*0.9)*0.5+0.5)*16);h+=`<i style="height:${v}px;background:currentColor"></i>`;}return `<span class="trend ${cls}">${h}</span>`;}
-function durMs(d){return d.endsWith('s')&&!d.endsWith('ms')?parseFloat(d)*1000:parseFloat(d);}
-
-// ── RENDER ──
-function renderBars(id,data,color){
-  const el=document.getElementById(id);
-  if(!el)return;
-  const max=Math.max(...data);
-  el.innerHTML=data.map((v,i)=>{
-    const h=Math.round((v/max)*100);
-    const c=h>80?(color==='accent'?'hi':'mid'):'';
-    return `<div class="bar ${c}" style="height:${h}%;${c?'':'background:var(--bar)'}"></div>`;
-  }).join('');
+const $=id=>document.getElementById(id);
+const RATE=0.042, P={ETH:3180,USDT:1};
+let cur="ETH", connected=false;
+function calc(){
+  const v=parseFloat($('pay').value)||0, usd=v*P[cur], tok=usd/RATE;
+  $('recv').textContent=tok.toLocaleString('en-US',{maximumFractionDigits:0});
+  $('recvusd').textContent="\u2248 $"+usd.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
-
-// Dashboard chart bars
-const succ=[88,90,92,94,93,96,95,94,92,93,95,94,92,90];
-const lat=[2.8,2.9,3.0,2.8,3.1,3.0,3.2,3.4,3.1,3.0,3.2,3.4,3.3,3.2];
-const cost=[980,1020,1100,1080,1140,1200,1180,1220,1240,1200,1260,1240,1280,1240];
-const err=[3,4,3,5,4,3,4,6,5,4,7,6,5,6];
-renderBars('ch-success',succ,'green');
-renderBars('ch-latency',lat,'accent');
-renderBars('ch-cost',cost,'accent');
-renderBars('ch-error',err,'accent');
-renderBars('ch-daily-cost',cost,'accent');
-renderBars('ch-tokens',[68,72,80,78,84,88,86,90,92,88,94,92,96,92],'blue');
-
-// Agent rows (dashboard + agents page)
-function agentRow(r,i,extra=''){
-  return `<tr class="row-click" data-open="agent" data-idx="${i}">
-    <td><div class="svc"><div class="ic"><i class="hgi-stroke hgi-bot"></i></div><div><div class="nm">${r.n}</div></div></div></td>
-    <td><span class="mono" style="color:var(--muted)">${r.env}</span></td>
-    <td><span class="mono" style="color:var(--muted)">${r.ver}</span></td>
-    ${extra}
-    <td><div style="display:flex;align-items:center;gap:8px"><span class="mono" style="font-weight:600">${r.suc}</span></div></td>
-    <td class="num">${r.lat}</td>
-    <td class="num">${r.cost}</td>
-    ${extra?'':'<td>'+r.dep+'</td>'}
-    <td><span class="st ${r.s}"><span class="d"></span>${r.si}</span></td>
-  </tr>`;
-}
-document.getElementById('rows-agents-dash').innerHTML=agents.slice(0,6).map((r,i)=>agentRow(r,i)).join('');
-document.getElementById('rows-agents').innerHTML=agents.map((r,i)=>`<tr class="row-click" data-open="agent" data-idx="${i}">
-  <td><div class="svc"><div class="ic"><i class="hgi-stroke hgi-bot"></i></div><div><div class="nm">${r.n}</div><div class="rg">${r.env}</div></div></div></td>
-  <td><span class="mono" style="color:var(--muted)">${r.env}</span></td>
-  <td><span class="mono" style="color:var(--muted)">${r.ver}</span></td>
-  <td class="num">${r.up}</td>
-  <td class="num" style="font-weight:600">${r.suc}</td>
-  <td class="num">${r.cost}</td>
-  <td class="num" style="color:var(--muted)">${r.dep}</td>
-  <td><span class="st ${r.s}"><span class="d"></span>${r.si}</span></td>
-</tr>`).join('');
-
-// Eval cards
-document.getElementById('eval-cards').innerHTML=evalMetrics.map(m=>`
-  <div class="eval-card">
-    <div class="ec-label">${m.l}</div>
-    <div class="ec-score">${m.v}</div>
-    <div class="ec-delta ${m.dc}">${m.delta} vs last run</div>
-    <div class="ec-bar"><div class="ec-fill" style="width:${m.fill}%;background:${m.color}"></div></div>
-  </div>`).join('');
-
-// Eval rows
-document.getElementById('rows-evals').innerHTML=evals.map((e,i)=>`<tr class="row-click" data-open="eval" data-idx="${i}">
-  <td><div class="svc"><div class="ic"><i class="hgi-stroke hgi-bot"></i></div><div class="nm">${e.agent}</div></div></td>
-  <td class="mono" style="color:var(--muted)">${e.bench}</td>
-  <td class="num" style="font-weight:600">${e.ts}</td>
-  <td class="num ${parseFloat(e.hall)>3?'pos':''}">${e.hall}</td>
-  <td class="num">${e.gc}</td>
-  <td class="num ${e.dc}">${e.delta}</td>
-  <td class="num" style="color:var(--muted)">${e.at}</td>
-</tr>`).join('');
-
-// Traces
-document.getElementById('traces-list').innerHTML=traces.map((t,ti)=>{
-  const total=durMs(t.dur);
-  const segs=t.segs.map(s=>{const sp=SPAN[s[2]];const ms=Math.round(total*(s[1]-s[0])/100);
-    return `<div class="seg" style="left:${s[0]}%;width:${s[1]-s[0]}%;background:${sp.c}"><span class="seg-tip">${sp.l} · ${ms}ms</span></div>`;}).join('');
-  return `<div class="trace-row" data-open="trace" data-idx="${ti}">
-    <span class="trace-id">${t.id}</span>
-    <div class="trace-name">${t.op}<span>${t.agent}</span></div>
-    <div class="wf">${segs}</div>
-    <span class="trace-dur">${t.dur}</span>
-    <span class="trace-tokens">${t.tokens}</span>
-  </div>`;}).join('');
-
-// Incidents
-document.getElementById('incidents-list').innerHTML=incidents.map((inc,i)=>`
-  <div class="inc-card" data-open="incident" data-idx="${i}">
-    <div class="inc-head">
-      <span class="sev ${inc.sev}"></span>
-      <span class="title">${inc.t}</span>
-      <span class="st ${inc.st}"><span class="d"></span>${inc.stl}</span>
-      <span class="time">${inc.time}</span>
-    </div>
-    <div class="inc-meta">
-      <span><span class="im-key">Root cause: </span>${inc.cause.slice(0,60)}…</span>
-      <span><span class="im-key">Affected: </span>${inc.aff.join(', ')}</span>
-    </div>
-  </div>`).join('');
-
-// Logs
-const logs=[];
-for(let i=0;i<24;i++){const m=logData[i%logData.length];const hh=String(13-Math.floor(i/4)).padStart(2,'0'),mm=String(59-(i*7%60)).padStart(2,'0'),ss=String((i*13)%60).padStart(2,'0');
-  logs.push({time:`${hh}:${mm}:${ss}`,lvl:m[0],lc:m[1],agent:m[2],msg:m[3]});}
-document.getElementById('rows-logs').innerHTML=logs.map((l,i)=>`<tr class="row-click" data-open="log" data-idx="${i}">
-  <td class="mono" style="color:var(--muted)">${l.time}</td>
-  <td><span class="lvl ${l.lc}">${l.lvl}</span></td>
-  <td class="mono" style="color:var(--muted)">${l.agent}</td>
-  <td class="mono" style="font-size:11px">${l.msg}</td>
-</tr>`).join('');
-
-// Deployments
-document.getElementById('dep-list').innerHTML=deploys.map((d,i)=>`
-  <div class="dep-item" data-open="deploy" data-idx="${i}" style="cursor:pointer">
-    <div class="dep-dot ${i===0?'latest':''}"><i class="hgi-stroke ${i===0?'hgi-rocket-01':'hgi-tick-02'}"></i></div>
-    <div class="dep-body">
-      <div class="dep-head">
-        <span class="dep-ver">${d.ver}</span>
-        <span class="mono" style="font-size:11px;color:var(--muted)">${d.agent} · ${d.env}</span>
-        <span class="dep-time">${d.t}</span>
-      </div>
-      <div class="dep-desc">${d.desc}</div>
-      <div class="dep-stats">
-        <span class="dep-stat ${d.suc.startsWith('+')&&!d.suc.startsWith('+-')?' neg':' pos'}"><i class="hgi-stroke hgi-checkmark-circle-02"></i>Success ${d.suc}</span>
-        <span class="dep-stat ${d.lat.startsWith('-')?' neg':' pos'}"><i class="hgi-stroke hgi-clock-01"></i>Latency ${d.lat}</span>
-        <span class="dep-stat"><i class="hgi-stroke hgi-money-bag-01"></i>Cost ${d.cost}</span>
-      </div>
-    </div>
-  </div>`).join('');
-
-// Cost lists
-document.getElementById('cost-list').innerHTML=costByAgent.map(c=>`
-  <div class="spend-row" style="cursor:default">
-    <div class="sn"><div style="font-weight:600">${c.n}</div><div class="mono" style="font-size:10px;color:var(--muted)">${c.tokens} tokens</div></div>
-    <div class="sbar"><div class="sbar-fill" style="width:${c.pct}%"></div></div>
-    <span class="sv">${c.spend}</span>
-    <span class="sp">${c.pct}%</span>
-  </div>`).join('');
-document.getElementById('model-list').innerHTML=costByModel.map(c=>`
-  <div class="spend-row" style="cursor:default">
-    <div class="sn"><div style="font-weight:600">${c.n}</div></div>
-    <div class="sbar"><div class="sbar-fill" style="width:${c.pct}%;background:var(--slate)"></div></div>
-    <span class="sv">${c.spend}</span>
-    <span class="sp">${c.pct}%</span>
-  </div>`).join('');
-
-// Alert rules
-document.getElementById('alerts-list').innerHTML=alertRules.map((a,i)=>`
-  <div class="alert-rule" data-open="alertrule" data-idx="${i}">
-    <div class="ar-ic ${a.firing?'st-crit':'st-ok'}" style="background:${a.firing?'rgba(255,69,0,.08)':'rgba(0,202,71,.08)'}">
-      <i class="hgi-stroke ${a.firing?'hgi-alert-02':'hgi-checkmark-circle-02'}" style="color:${a.firing?'var(--ab)':'var(--green)'}"></i>
-    </div>
-    <div class="ar-body">
-      <div class="ar-name">${a.n} ${a.firing?'<span class="st st-crit" style="font-size:10px;padding:2px 8px"><span class="d"></span>firing</span>':''}</div>
-      <div class="ar-cond">${a.cond}</div>
-    </div>
-    <div class="ar-chan">${a.ch.map(c=>`<i class="hgi-stroke hgi-notification-02"></i>${c}`).join(' · ')}</div>
-  </div>`).join('');
-
-// ── DRAWER ──
-const drawer=document.getElementById('drawer'),scrim=document.getElementById('scrim');
-function openDrawer(titleA,titleB,statusHTML,tabs){
-  document.getElementById('d-title-a').textContent=titleA;
-  document.getElementById('d-title-b').textContent=titleB;
-  document.getElementById('d-status').innerHTML=statusHTML||'';
-  const tabBar=document.getElementById('d-tabs');
-  const bodies=document.getElementById('d-bodies');
-  tabBar.innerHTML=tabs.map((t,i)=>`<div class="d-tab ${i===0?'active':''}" data-ti="${i}">${t.label}</div>`).join('');
-  bodies.innerHTML=tabs.map((t,i)=>`<div class="d-tab-body ${i===0?'active':''}" data-ti="${i}">${t.body}</div>`).join('');
-  tabBar.querySelectorAll('.d-tab').forEach(tab=>{
-    tab.addEventListener('click',()=>{
-      tabBar.querySelectorAll('.d-tab').forEach(t=>t.classList.remove('active'));
-      bodies.querySelectorAll('.d-tab-body').forEach(t=>t.classList.remove('active'));
-      tab.classList.add('active');
-      bodies.querySelector(`[data-ti="${tab.dataset.ti}"]`).classList.add('active');
-    });
-  });
-  drawer.classList.add('open');scrim.classList.add('open');
-}
-function closeDrawer(){drawer.classList.remove('open');scrim.classList.remove('open');}
-document.getElementById('drawer-close').addEventListener('click',closeDrawer);
-scrim.addEventListener('click',closeDrawer);
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
-
-function kv(k,v){return `<div class="d-kv"><span class="k">${k}</span><span class="v">${v}</span></div>`;}
-function stat(l,v,sm){return `<div class="d-stat"><div class="l">${l}</div><div class="v ${sm?'sm':''}">${v}</div></div>`;}
-function miniBarChart(data,color){const max=Math.max(...data);return `<div class="mini-chart">${data.map(v=>`<div class="mc-bar" style="height:${Math.round(v/max*100)}%;background:${color}"></div>`).join('')}</div>`;}
-
-const builders={
-  agent(i){
-    const r=agents[i];
-    openDrawer(r.n,`${r.env} · ${r.ver}`,`<span class="st ${r.s}"><span class="d"></span>${r.si}</span>`,[
-      {label:'Overview',body:`<div class="d-sec"><div class="d-grid">
-        ${stat('Success Rate',r.suc)}${stat('Avg Latency',r.lat)}${stat('Cost / Task',r.cost)}${stat('Uptime',r.up)}
-      </div></div>
-      <div class="d-sec"><h4>Performance (7d)</h4>${miniBarChart([91,92,94,93,96,95,94],'var(--green)')}</div>
-      <div class="d-sec"><h4>Details</h4>
-        ${kv('Environment',r.env)}${kv('Version',r.ver)}${kv('Last deploy',r.dep)}${kv('Tools',r.tools.join(', '))}
-      </div>
-      <div class="d-sec"><div class="d-actions">
-        <div class="d-btn pri"><i class="hgi-stroke hgi-share-08"></i>View traces</div>
-        <div class="d-btn"><i class="hgi-stroke hgi-task-01"></i>Evaluations</div>
-      </div></div>`},
-      {label:'Evaluations',body:`<div class="d-sec"><div class="d-grid">
-        ${stat('Task Success',r.suc)}${stat('Goal Completion','81.4%')}${stat('Hallucination','2.1%',true)}${stat('Retrieval Acc.','91.2%')}
-      </div></div>
-      <div class="d-sec"><h4>Eval trend</h4>${miniBarChart([88,90,91,93,92,94,95],'var(--blue)')}</div>
-      <div class="d-sec"><h4>Regression alerts</h4>
-        <div style="font-size:12px;color:var(--muted);padding:16px;text-align:center;border:1px solid var(--line);border-radius:8px">No regressions detected in last 7 days</div>
-      </div>`},
-      {label:'Traces',body:`<div class="d-sec"><h4>Recent executions</h4>
-        ${traces.filter(t=>t.agent===r.n).map(t=>`<div style="padding:10px 0;border-bottom:1px solid var(--line);font-size:12px">
-          <div style="display:flex;justify-content:space-between"><span class="mono" style="color:var(--blue)">${t.id}</span><span class="mono">${t.dur} · ${t.tokens}</span></div>
-          <div style="color:var(--muted);margin-top:4px">${t.op}</div>
-        </div>`).join('') || '<div style="padding:16px;text-align:center;color:var(--muted);font-size:12px">No traces for this agent</div>'}
-      </div>`},
-      {label:'Deployments',body:`<div class="d-sec"><h4>Release history</h4>
-        ${deploys.filter(d=>d.agent===r.n).map(d=>`<div style="padding:10px 0;border-bottom:1px solid var(--line)">
-          <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">${d.ver}</span><span class="mono" style="font-size:11px;color:var(--muted)">${d.t}</span></div>
-          <div style="font-size:11px;color:var(--muted);margin-top:4px">${d.desc}</div>
-          <div style="display:flex;gap:12px;margin-top:6px;font-family:var(--mono);font-size:11px">
-            <span class="${d.suc.startsWith('+')?'neg':'pos'}">Success ${d.suc}</span>
-            <span class="${d.lat.startsWith('-')?'neg':'pos'}">Latency ${d.lat}</span>
-          </div>
-        </div>`).join('') || '<div style="padding:16px;text-align:center;color:var(--muted);font-size:12px">No deployments for this agent</div>'}
-      </div>`},
-      {label:'Logs',body:`<div class="d-sec"><h4>Recent logs</h4>
-        ${logs.filter(l=>l.agent===r.n).slice(0,8).map(l=>`<div style="padding:8px 0;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:10px">
-          <span class="lvl ${l.lc}">${l.lvl}</span>
-          <span class="mono" style="font-size:11px;flex:1">${l.msg}</span>
-          <span class="mono" style="font-size:10px;color:var(--muted)">${l.time}</span>
-        </div>`).join('') || '<div style="padding:16px;text-align:center;color:var(--muted);font-size:12px">No logs for this agent</div>'}
-      </div>`},
-    ]);
-  },
-  eval(i){
-    const e=evals[i];
-    openDrawer(`Eval: ${e.agent}`,`${e.bench} · ${e.at}`,`<span class="mono ${e.dc}" style="font-size:12px;font-weight:600">${e.delta}</span>`,[
-      {label:'Results',body:`<div class="d-sec"><div class="d-grid">
-        ${stat('Task Success',e.ts)}${stat('Goal Completion',e.gc)}${stat('Hallucination',e.hall,true)}${stat('vs Previous',e.delta,true)}
-      </div></div>
-      <div class="d-sec"><h4>Score trend</h4>${miniBarChart([88,90,91,93,92,94,parseFloat(e.ts)],'var(--blue)')}</div>
-      <div class="d-sec"><h4>Details</h4>
-        ${kv('Benchmark',e.bench)}${kv('Agent',e.agent)}${kv('Run at',e.at)}${kv('Dataset size','400 examples')}
-      </div>
-      <div class="d-sec"><div class="d-actions">
-        <div class="d-btn pri"><i class="hgi-stroke hgi-task-01"></i>Compare to baseline</div>
-        <div class="d-btn"><i class="hgi-stroke hgi-restart"></i>Re-run</div>
-      </div></div>`},
-      {label:'Task Breakdown',body:`<div class="d-sec"><h4>Failed tasks</h4>
-        ${['Multi-hop reasoning','Source attribution','Tool chaining (3+)'].map(t=>`<div style="padding:10px 0;border-bottom:1px solid var(--line);font-size:12px;display:flex;justify-content:space-between"><span>${t}</span><span class="mono pos">failing</span></div>`).join('')}
-      </div>
-      <div class="d-sec"><h4>Passed tasks</h4>
-        ${['Single-source QA','Summarization','Classification'].map(t=>`<div style="padding:10px 0;border-bottom:1px solid var(--line);font-size:12px;display:flex;justify-content:space-between"><span>${t}</span><span class="mono neg">passing</span></div>`).join('')}
-      </div>`},
-    ]);
-  },
-  trace(i){
-    const t=traces[i];const total=durMs(t.dur);
-    const spans=t.segs.map(s=>{const sp=SPAN[s[2]];const ms=Math.round(total*(s[1]-s[0])/100);const w=s[1]-s[0];
-      return `<div class="span-row"><span class="sdot" style="background:${sp.c}"></span><span class="snm">${sp.l}</span><span class="sbar"><div style="width:${w}%;background:${sp.c}"></div></span><span class="sms">${ms}ms</span></div>`;}).join('');
-    openDrawer(t.op,`${t.id} · ${t.agent}`,`<span class="mono" style="font-size:12px">${t.dur}</span>`,[
-      {label:'Spans',body:`<div class="d-sec"><div class="d-grid">
-        ${stat('Duration',t.dur)}${stat('Tokens',t.tokens)}${stat('Cost',t.cost)}${stat('Spans',t.segs.length)}
-      </div></div>
-      <div class="d-sec"><h4>Span breakdown</h4>${spans}</div>
-      <div class="d-sec"><h4>Metadata</h4>
-        ${kv('Trace ID',t.id)}${kv('Agent',t.agent)}${kv('Status','200 OK')}${kv('Environment','production')}
-      </div>
-      <div class="d-sec"><div class="d-actions">
-        <div class="d-btn pri"><i class="hgi-stroke hgi-copy-01"></i>Copy trace ID</div>
-        <div class="d-btn"><i class="hgi-stroke hgi-file-02"></i>View logs</div>
-      </div></div>`},
-      {label:'LLM Calls',body:`<div class="d-sec"><h4>LLM calls in this trace</h4>
-        <div class="d-kv"><span class="k">Model</span><span class="v">gpt-4o</span></div>
-        <div class="d-kv"><span class="k">Prompt tokens</span><span class="v">${Math.round(parseInt(t.tokens)*0.7)}t</span></div>
-        <div class="d-kv"><span class="k">Completion tokens</span><span class="v">${Math.round(parseInt(t.tokens)*0.3)}t</span></div>
-        <div class="d-kv"><span class="k">Temperature</span><span class="v">0.2</span></div>
-        <div class="d-sec" style="margin-top:16px"><h4>Prompt preview</h4><div class="logbox">System: You are a research agent…\nUser: Find recent papers on RAG improvements…</div></div>
-      </div>`},
-      {label:'Output',body:`<div class="d-sec"><h4>Final response</h4><div class="logbox">Based on the retrieved sources, here are the key findings…\n\n[Truncated for display]</div></div>`},
-    ]);
-  },
-  incident(i){
-    const inc=incidents[i];
-    openDrawer(inc.t,`${inc.svc} · ${inc.time}`,`<span class="st ${inc.st}"><span class="d"></span>${inc.stl}</span>`,[
-      {label:'Overview',body:`<div class="d-sec"><h4>Root cause</h4><div class="logbox">${inc.cause}</div></div>
-      <div class="d-sec"><h4>Affected agents</h4>
-        ${inc.aff.map(a=>`<div class="d-kv"><span class="k">${a}</span><span class="v st st-warn" style="font-size:10px"><span class="d"></span>degraded</span></div>`).join('')}
-      </div>
-      <div class="d-sec"><h4>Timeline</h4>
-        <div class="tl-timeline">${inc.timeline.map((s,j)=>`<div class="tl-step ${j===0?'hot':''}"><div class="ts-t">${s.split(' · ')[0]}</div><div class="ts-m">${s.split(' · ')[1]||''}</div></div>`).join('')}</div>
-      </div>
-      <div class="d-sec"><div class="d-actions">
-        <div class="d-btn pri"><i class="hgi-stroke hgi-checkmark-circle-02"></i>Acknowledge</div>
-        <div class="d-btn"><i class="hgi-stroke hgi-cancel-01"></i>Silence</div>
-      </div></div>`},
-      {label:'Traces',body:`<div class="d-sec"><h4>Related traces</h4>
-        ${traces.filter(t=>t.agent===inc.svc).map(t=>`<div style="padding:10px 0;border-bottom:1px solid var(--line);font-size:12px">
-          <div style="display:flex;justify-content:space-between"><span class="mono" style="color:var(--blue)">${t.id}</span><span class="mono">${t.dur}</span></div>
-          <div style="color:var(--muted);margin-top:4px">${t.op}</div>
-        </div>`).join('')}
-      </div>`},
-    ]);
-  },
-  log(i){
-    const l=logs[i];
-    openDrawer(l.msg.length>38?l.msg.slice(0,38)+'…':l.msg,`${l.agent} · ${l.time}`,`<span class="lvl ${l.lc}">${l.lvl}</span>`,[
-      {label:'Details',body:`<div class="d-sec"><div class="d-grid">
-        ${stat('Level',`<span class="lvl ${l.lc}">${l.lvl}</span>`,true)}${stat('Agent',l.agent,true)}${stat('Time',l.time,true)}${stat('Host','pod-1',true)}
-      </div></div>
-      <div class="d-sec"><h4>Message</h4><div class="logbox">${l.msg}</div></div>
-      <div class="d-sec"><h4>Context</h4>
-        ${kv('Agent',l.agent)}${kv('Environment','production')}${kv('Trace','7f3a9c2e')}${kv('Region','us-east-1')}
-      </div>
-      <div class="d-sec"><div class="d-actions">
-        <div class="d-btn pri"><i class="hgi-stroke hgi-share-08"></i>Open trace</div>
-        <div class="d-btn"><i class="hgi-stroke hgi-copy-01"></i>Copy</div>
-      </div></div>`},
-    ]);
-  },
-  deploy(i){
-    const d=deploys[i];
-    openDrawer(`${d.agent} ${d.ver}`,`${d.env} · ${d.t}`,`<span class="st ${d.ok?'st-ok':'st-warn'}"><span class="d"></span>${d.ok?'success':'regression'}</span>`,[
-      {label:'Overview',body:`<div class="d-sec"><div class="d-grid">
-        ${stat('Success Δ',d.suc)}${stat('Latency Δ',d.lat)}${stat('Cost Δ',d.cost)}${stat('Status',d.ok?'✓ Healthy':'⚠ Regression',true)}
-      </div></div>
-      <div class="d-sec"><h4>Changes</h4><div class="logbox">${d.desc}</div></div>
-      <div class="d-sec"><h4>Performance after deploy</h4>\${miniBarChart(d.ok?[90,91,92,94,95]:[90,91,88,87,86],'var(--green)')}</div>
-      <div class="d-sec"><div class="d-actions">
-        ${!d.ok?`<div class="d-btn pri"><i class="hgi-stroke hgi-arrow-turn-backward"></i>Rollback</div>`:''}
-        <div class="d-btn"><i class="hgi-stroke hgi-share-08"></i>View traces</div>
-      </div></div>`},
-    ]);
-  },
-  alertrule(i){
-    const a=alertRules[i];
-    openDrawer(a.n,a.cond,`<span class="st ${a.firing?'st-crit':'st-ok'}"><span class="d"></span>${a.firing?'firing':'ok'}</span>`,[
-      {label:'Rule',body:`<div class="d-sec"><h4>Condition</h4><div class="logbox">${a.cond}</div></div>
-      <div class="d-sec"><h4>Configuration</h4>
-        ${kv('Severity',a.sev)}${kv('Channels',a.ch.join(', '))}${kv('Evaluation window','5 minutes')}${kv('Cooldown','15 minutes')}
-      </div>
-      <div class="d-sec"><div class="d-actions">
-        <div class="d-btn"><i class="hgi-stroke hgi-edit-01"></i>Edit rule</div>
-        <div class="d-btn"><i class="hgi-stroke hgi-cancel-01"></i>Silence</div>
-      </div></div>`},
-    ]);
-  },
-};
-
-// ── TOAST ──
-function toast(msg,err){
-  const w=document.getElementById('toast-wrap');
-  const t=document.createElement('div');
-  t.className='toast'+(err?' err':'');
-  t.innerHTML=`<i class="hgi-stroke ${err?'hgi-alert-02':'hgi-checkmark-circle-02'}"></i>${msg}`;
-  w.appendChild(t);
-  requestAnimationFrame(()=>t.classList.add('show'));
-  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),250);},2800);
-}
-
-// ── MODAL ──
-const modalScrim=document.getElementById('modal-scrim');
-let modalOnSubmit=null;
-function openModal(title,bodyHTML,submitLabel,onSubmit){
-  document.getElementById('modal-title').textContent=title;
-  document.getElementById('modal-body').innerHTML=bodyHTML;
-  document.getElementById('modal-submit').textContent=submitLabel||'Create';
-  modalOnSubmit=onSubmit;
-  modalScrim.classList.add('open');
-}
-function closeModal(){modalScrim.classList.remove('open');modalOnSubmit=null;}
-document.getElementById('modal-close').addEventListener('click',closeModal);
-document.getElementById('modal-cancel').addEventListener('click',closeModal);
-modalScrim.addEventListener('click',e=>{if(e.target===modalScrim)closeModal();});
-document.getElementById('modal-submit').addEventListener('click',()=>{if(modalOnSubmit)modalOnSubmit();});
-
-const agentOpts=['research-agent','support-agent','code-agent','data-agent','planner-agent','audit-agent'].map(a=>`<option>${a}</option>`).join('');
-
-const modalDefs={
-  'deploy-agent':()=>openModal('Deploy agent',
-    `<div class="field"><label>Agent name</label><input id="f-name" placeholder="my-new-agent"></div>
-     <div class="field"><label>Base model</label><select><option>gpt-4o</option><option>claude-3-5-sonnet</option><option>gpt-4o-mini</option></select></div>
-     <div class="field"><label>Environment</label><select><option>production</option><option>staging</option><option>development</option></select></div>
-     <div class="field"><label>Tools (comma separated)</label><input placeholder="web-search, pdf-reader"></div>`,
-    'Deploy',()=>{const n=document.getElementById('f-name').value||'new-agent';closeModal();toast(`Agent "${n}" deployed`);}),
-  'run-eval':()=>openModal('Run evaluation',
-    `<div class="field"><label>Agent</label><select>${agentOpts}</select></div>
-     <div class="field"><label>Benchmark</label><select><option>FRAMES</option><option>HumanEval</option><option>BIRD-SQL</option><option>TaskBench</option><option>Custom v3</option></select></div>
-     <div class="field"><label>Dataset size</label><input value="400"></div>`,
-    'Run',()=>{closeModal();toast('Evaluation queued — results in ~2m');}),
-  'new-deploy':()=>openModal('New deployment',
-    `<div class="field"><label>Agent</label><select>${agentOpts}</select></div>
-     <div class="field"><label>Version tag</label><input placeholder="v2.5.0"></div>
-     <div class="field"><label>Environment</label><select><option>staging</option><option>production</option></select></div>
-     <div class="field"><label>Release notes</label><textarea placeholder="What changed in this release?"></textarea></div>`,
-    'Deploy',()=>{closeModal();toast('Deployment started');}),
-  'new-rule':()=>openModal('New alert rule',
-    `<div class="field"><label>Rule name</label><input placeholder="Success rate regression"></div>
-     <div class="field"><label>Condition</label><input placeholder="success_rate < 90% for 5m"></div>
-     <div class="field"><label>Severity</label><select><option>critical</option><option>warning</option><option>info</option></select></div>
-     <div class="field"><label>Notify channels</label><select><option>Slack</option><option>PagerDuty</option><option>Email</option><option>Discord</option></select></div>`,
-    'Create rule',()=>{closeModal();toast('Alert rule created');}),
-  'invite':()=>openModal('Invite team member',
-    `<div class="field"><label>Email</label><input placeholder="name@company.com"></div>
-     <div class="field"><label>Role</label><select><option>Member</option><option>Admin</option><option>Viewer</option></select></div>`,
-    'Send invite',()=>{closeModal();toast('Invite sent');}),
-  'quick-add':()=>openModal('Quick create',
-    `<div class="field"><label>What would you like to create?</label><select id="f-qa"><option value="deploy-agent">New agent</option><option value="new-deploy">New deployment</option><option value="run-eval">Run evaluation</option><option value="new-rule">Alert rule</option></select></div>`,
-    'Continue',()=>{const v=document.getElementById('f-qa').value;closeModal();setTimeout(()=>modalDefs[v](),150);}),
-  'notifications':()=>openModal('Notifications',
-    `<div style="font-size:12px;color:var(--muted);line-height:1.8">
-       <div style="padding:10px 0;border-bottom:1px solid var(--line)"><b style="color:var(--ink)">Hallucination spike</b><br>research-agent · 12m ago</div>
-       <div style="padding:10px 0;border-bottom:1px solid var(--line)"><b style="color:var(--ink)">Tool failure</b><br>code-agent · 44m ago</div>
-       <div style="padding:10px 0"><b style="color:var(--ink)">Deploy succeeded</b><br>research-agent v2.4.1 · 2h ago</div>
-     </div>`,
-    'Mark all read',()=>{closeModal();toast('All notifications marked read');}),
-};
-
-// ── DATE STEPPER ──
-const dateRanges=['Last 24 hours','Last 7 days','Last 14 days','Last 30 days','Last 90 days'];
-let dateIdx=1;
-document.getElementById('date-stepper').addEventListener('click',e=>{
-  const ar=e.target.closest('[data-step]'); if(!ar)return;
-  dateIdx=Math.max(0,Math.min(dateRanges.length-1,dateIdx+(+ar.dataset.step)));
-  document.getElementById('date-label').textContent=dateRanges[dateIdx];
-  toast(`Range: ${dateRanges[dateIdx]}`);
-});
-
-// ── DROPDOWN MENU (filter pills) ──
-const menuPop=document.getElementById('menu-pop');
-let menuTarget=null;
-const filterOpts={
-  'All environments':['All environments','production','staging','development'],
-  'All agents':['All agents','research-agent','support-agent','code-agent','data-agent'],
-  'All severity':['All severity','critical','warning','info'],
-  'Filter by agent':['All agents','research-agent','support-agent','code-agent','data-agent'],
-};
-function openMenu(pill){
-  const label=pill.querySelector('.lb-txt')?pill.querySelector('.lb-txt').textContent:pill.textContent.trim().replace(/[▾\s]+$/,'');
-  const key=Object.keys(filterOpts).find(k=>label.includes(k.split(' ')[1])||label===k)||Object.keys(filterOpts).find(k=>k.startsWith(label.split(' ')[0]));
-  const opts=filterOpts[key]||['All'];
-  menuPop.innerHTML=opts.map(o=>`<div class="mi ${o===label?'sel':''}">${o}</div>`).join('');
-  const r=pill.getBoundingClientRect();
-  menuPop.style.left=r.left+'px';
-  menuPop.style.top=(r.bottom+6)+'px';
-  menuPop.classList.add('open');
-  menuTarget=pill;
-}
-function closeMenu(){menuPop.classList.remove('open');menuTarget=null;}
-menuPop.addEventListener('click',e=>{
-  const mi=e.target.closest('.mi'); if(!mi||!menuTarget)return;
-  // update pill text (keep the chevron icon)
-  const icon=menuTarget.querySelector('i');
-  menuTarget.childNodes.forEach(n=>{if(n.nodeType===3)n.textContent=mi.textContent+' ';});
-  if(!menuTarget.querySelector('.lb-txt') && menuTarget.firstChild && menuTarget.firstChild.nodeType===3){
-    menuTarget.firstChild.textContent=mi.textContent+' ';
-  }
-  toast(`Filtered: ${mi.textContent}`);
-  closeMenu();
-});
-
-// ── LOG LEVEL FILTER PILLS ──
-function wireLogFilters(){
-  const logView=document.getElementById('v-logs');
-  const pills=logView.querySelectorAll('.pill');
-  pills.forEach(p=>{
-    if(p.dataset.wired)return; p.dataset.wired='1';
-    p.addEventListener('click',()=>{
-      const txt=p.textContent.trim();
-      if(['All','Error','Warn','Info','Debug'].includes(txt)){
-        logView.querySelectorAll('.pill').forEach(x=>{if(['All','Error','Warn','Info','Debug'].includes(x.textContent.trim()))x.classList.remove('on');});
-        p.classList.add('on');
-        const lvl=txt.toLowerCase();
-        document.querySelectorAll('#rows-logs tr').forEach(tr=>{
-          const rowLvl=tr.querySelector('.lvl').textContent.trim();
-          tr.style.display=(txt==='All'||rowLvl===lvl||(txt==='Warn'&&rowLvl==='warn'))?'':'none';
-        });
-      }
-    });
-  });
-}
-
-// ── LOG SEARCH ──
-function wireLogSearch(){
-  const inp=document.querySelector('#v-logs input');
-  if(inp && !inp.dataset.wired){inp.dataset.wired='1';
-    inp.addEventListener('input',()=>{
-      const q=inp.value.toLowerCase();
-      document.querySelectorAll('#rows-logs tr').forEach(tr=>{
-        tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none';
-      });
-    });
-  }
-}
-wireLogFilters(); wireLogSearch();
-
-// ── NAV ──
-const meta={
-  dashboard:{t:'Dashboard',c:'production · all agents'},
-  agents:{t:'Agents',c:'8 deployed · 2 degraded'},
-  evaluations:{t:'Evaluations',c:'AI quality metrics · last run today'},
-  traces:{t:'Traces',c:'every execution · production'},
-  incidents:{t:'Incidents',c:'active & resolved incidents'},
-  logs:{t:'Logs',c:'structured logs · all agents'},
-  deployments:{t:'Deployments',c:'release history · all agents'},
-  cost:{t:'Cost',c:'spend & token usage'},
-  alerts:{t:'Alerts',c:'rules & notification channels'},
-  settings:{t:'Settings',c:'workspace configuration'},
-};
-const nav=document.getElementById('nav');
-nav.addEventListener('click',e=>{
-  const item=e.target.closest('.nav-item'); if(!item||!item.dataset.view) return;
-  const v=item.dataset.view;
-  nav.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n===item));
-  document.querySelectorAll('.view').forEach(view=>view.classList.toggle('active',view.id==='v-'+v));
-  document.getElementById('ttl').textContent=meta[v].t;
-  document.getElementById('crumb').textContent=meta[v].c;
-  document.querySelector('.scroll').scrollTop=0;
-  closeDrawer();
-});
-
-// ── GLOBAL CLICK DELEGATION ──
-document.addEventListener('click',e=>{
-  // close menu if clicking outside
-  if(menuPop.classList.contains('open') && !e.target.closest('#menu-pop') && !e.target.closest('.pill')){closeMenu();}
-
-  const tg=e.target.closest('[data-toggle]'); if(tg){tg.classList.toggle('on');toast(tg.classList.contains('on')?'Enabled':'Disabled');return;}
-
-  // action buttons (modals)
-  const act=e.target.closest('[data-action]');
-  if(act){const a=act.dataset.action; if(modalDefs[a]){modalDefs[a]();return;}}
-
-  // filter pills (dropdown)
-  const pill=e.target.closest('.pill');
-  if(pill && (pill.textContent.includes('All ')||pill.textContent.includes('Filter by'))){
-    if(menuTarget===pill){closeMenu();}else{openMenu(pill);}
-    return;
-  }
-
-  // drawer action buttons (.d-btn inside drawer)
-  const dbtn=e.target.closest('.drawer .d-btn');
-  if(dbtn){
-    const label=dbtn.textContent.trim();
-    if(label.includes('View traces')){closeDrawer();document.querySelector('[data-view="traces"]').click();return;}
-    if(label.includes('Evaluations')){closeDrawer();document.querySelector('[data-view="evaluations"]').click();return;}
-    if(label.includes('View logs')){closeDrawer();document.querySelector('[data-view="logs"]').click();return;}
-    if(label.includes('Copy')){toast('Copied to clipboard');return;}
-    if(label.includes('Acknowledge')){toast('Incident acknowledged');closeDrawer();return;}
-    if(label.includes('Silence')){toast('Silenced for 1 hour');return;}
-    if(label.includes('Rollback')){toast('Rollback initiated',false);closeDrawer();return;}
-    if(label.includes('Re-run')||label.includes('Compare')){toast('Running…');return;}
-    if(label.includes('Open trace')){closeDrawer();document.querySelector('[data-view="traces"]').click();return;}
-    if(label.includes('Edit rule')){toast('Opening rule editor');return;}
-    if(label.includes('Query insights')||label.includes('Configure')){toast('Opening '+label.toLowerCase());return;}
-    toast(label);
-    return;
-  }
-
-  // pills inside settings (Rotate) + drawer
-  const rot=e.target.closest('.pill');
-  if(rot && rot.textContent.trim()==='Rotate'){toast('API key rotated');return;}
-
-  // row open -> drawer
-  const open=e.target.closest('[data-open]');
-  if(open){const type=open.dataset.open,idx=+open.dataset.idx;if(builders[type])builders[type](idx);}
-});
+$('pay').addEventListener('input',calc);
+$('sel').addEventListener('click',()=>{cur=cur==="ETH"?"USDT":"ETH";$('payCur').textContent=cur;$('payIcon').className="cn "+(cur==="ETH"?"eth":"usdt");$('pay').value=cur==="ETH"?"1.0":"1000";calc();});
+$('max').addEventListener('click',()=>{$('pay').value=cur==="ETH"?"4.20":"4200";calc();});
+function connect(){connected=true;$('wallet').classList.add('on');$('wallet').innerHTML='<span class="d"></span> 0x7a4f\u20262E9b';$('holdings').classList.add('show');$('cta').classList.remove('locked');$('cta').textContent="Buy SOGC";}
+$('wallet').addEventListener('click',()=>{if(!connected)connect();});
+$('cta').addEventListener('click',()=>{if(!connected){connect();}else{$('cta').textContent="Confirm in wallet\u2026";setTimeout(()=>$('cta').textContent="Buy SOGC",1800);}});
+calc();
 </script>
 </body>
 </html>
